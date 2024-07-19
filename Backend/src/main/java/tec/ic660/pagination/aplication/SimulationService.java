@@ -66,7 +66,7 @@ public class SimulationService {
 
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
-        System.out.println(instruction);
+//        System.out.println(instruction);
         if (instruction.startsWith("new")) {
             this.executeNew(instruction);
         } else if (instruction.startsWith("use")) {
@@ -151,7 +151,6 @@ public class SimulationService {
                 }
                 System.out.println("Error en la posición " + i + ": " + e.getMessage());
                 e.printStackTrace(); // Imprimir el stack trace completo para ayudar a identificar el error
-                System.exit(1);
             }
         }
 

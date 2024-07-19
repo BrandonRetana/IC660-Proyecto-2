@@ -55,7 +55,6 @@ public class SchedulerEntity {
     public void killProcess(Integer pid) {
         if (!this.processTable.containsKey(pid)) {
             System.out.println("Process not found");
-            System.exit(1);
             return;
         }
         List<PTR> ptrList = this.processTable.get(pid);
