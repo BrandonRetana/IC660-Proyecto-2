@@ -114,12 +114,12 @@ npm run dev &
 ```
 
 ### 6. Finalización
-El backend y el frontend estarán ejecutándose en segundo plano. Para detener ambos procesos, puedes utilizar el siguiente comando para listar los procesos activos y detenerlos:
+El backend y el frontend estarán ejecutándose en segundo plano. Para detener ambos procesos, puedes utilizar el siguiente comando para listar los procesos activos y detenerlos, reemplanzo en puerto por el 8080 y el 5173:
 
 ```bash
-jobs -l  # Muestra los procesos en segundo plano
-kill %1  # Detiene el proceso del backend
-kill %2  # Detiene el proceso del frontend
+sudo lsof -i :<puerto> # Muestra los procesos escuando ese puerto
+kill -9 <pid>  # Detiene el proceso del backend
+kill -9 <pid>  # Detiene el proceso del frontend
 ```
 
 Autores
