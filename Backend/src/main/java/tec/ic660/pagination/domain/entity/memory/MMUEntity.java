@@ -1,10 +1,12 @@
-package tec.ic660.pagination.domain.entity;
+package tec.ic660.pagination.domain.entity.memory;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
+
+import tec.ic660.pagination.domain.valueObjects.PTR;
 
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;

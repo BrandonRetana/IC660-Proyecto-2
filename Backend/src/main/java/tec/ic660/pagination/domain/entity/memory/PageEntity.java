@@ -1,4 +1,4 @@
-package tec.ic660.pagination.domain.entity;
+package tec.ic660.pagination.domain.entity.memory;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package tec.ic660.pagination.domain.entity;
+package tec.ic660.pagination.domain.entity.cpu;
 
 import java.util.ArrayList;
 import java.util.List;
