@@ -5,14 +5,14 @@ import java.util.UUID;
 public class PageEntity {
     private final UUID id;
     private final int physicalAddres;
-    private boolean isInVirtualMemory;
+    private boolean isInRealMemory;
     private boolean isInUse;
     
-    public PageEntity(int physicalAddres, boolean isInVirtualMemory) {
+    public PageEntity(int physicalAddres, boolean isInRealMemory) {
         this.id = UUID.randomUUID();
         this.physicalAddres = physicalAddres;
-        this.isInVirtualMemory = isInVirtualMemory;
-        this.isInUse = false;
+        this.isInRealMemory = isInRealMemory;
+        this.isInUse = true;
     }
 
     public UUID getId() {
@@ -23,18 +23,17 @@ public class PageEntity {
         return physicalAddres;
     }
 
-    public boolean isInVirtualMemory() {
-        return isInVirtualMemory;
+    public boolean isInRealMemory() {
+        return isInRealMemory;
     }
 
-    public void setInVirtualMemory(boolean isInVirtualMemory) {
-        this.isInVirtualMemory = isInVirtualMemory;
+    public void setInVirtualMemory(boolean isInRealMemory) {
+        this.isInRealMemory = isInRealMemory;
     }
 
     public boolean isInUse() {
         return isInUse;
     }
-    
 
     public void setInPtr(boolean isInUse) {
         this.isInUse = isInUse;
