@@ -1,3 +1,5 @@
+package tec.ic660.pagination.domain.entity;
+
 import java.util.UUID;
 
 public class PTR {

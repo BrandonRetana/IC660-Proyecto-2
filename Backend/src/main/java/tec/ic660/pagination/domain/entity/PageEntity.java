@@ -27,20 +27,15 @@ public class PageEntity {
         return isInRealMemory;
     }
 
-    public void setInVirtualMemory(boolean isInRealMemory) {
+    public void setInRealMemory(boolean isInRealMemory) {
         this.isInRealMemory = isInRealMemory;
     }
 
-    public boolean isInUse() {
-        return isInUse;
+    public boolean isUsed() {
+        return used;
     }
 
-    public void setInPtr(boolean isInUse) {
-        this.isInUse = isInUse;
+    public void setUsed(boolean used) {
+        this.used = used;
     }
-
-    public void setInUse(boolean isInUse) {
-        this.isInUse = isInUse;
-    }
-    
 }

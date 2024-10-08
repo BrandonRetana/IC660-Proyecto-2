@@ -16,7 +16,6 @@ public class MMUEntity {
         this.realMemory = new ArrayList<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
-        this.initializePages();
     }
 
     private int calculatePages(int size) {
@@ -41,9 +40,10 @@ public class MMUEntity {
             }
         }
         if (requiredPages > 0) {
-            for (int i = 0 ; i < requiredPages > 0; i++) {
+            for (int i = 0 ; i < requiredPages; i++) {
                 PageEntity page = new PageEntity(i, true);
                 //TODO: aqui va el algoritmo de paginacion
+                requiredPages--;
             }
         }
         memoryMap.put(ptr, pages);
