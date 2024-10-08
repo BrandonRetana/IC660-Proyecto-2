@@ -5,9 +5,7 @@ import java.util.List;
 public class SchedulerEntity {
     private List<ProcessEntity> processTable;
 
-    public SchedulerEntity(List<ProcessEntity> processTable) {
-        this.processTable = processTable;
-    }
+    public SchedulerEntity() {}
 
     public List<ProcessEntity> getProcessTable() {
         return processTable;
