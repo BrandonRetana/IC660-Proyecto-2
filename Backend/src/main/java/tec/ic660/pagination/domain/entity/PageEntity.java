@@ -6,13 +6,13 @@ public class PageEntity {
     private final UUID id;
     private final int physicalAddres;
     private boolean isInRealMemory;
-    private boolean isInUse;
+    private boolean used;
     
     public PageEntity(int physicalAddres, boolean isInRealMemory) {
         this.id = UUID.randomUUID();
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
-        this.isInUse = true;
+        this.used = false;
     }
 
     public UUID getId() {

@@ -5,12 +5,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class ProcessEntity {
-    private UUID pId;
-    private  List<UUID> sybomTable;
+    private UUID pid;
+    private List<UUID> sybomTable;
 
     public ProcessEntity() {
         this.sybomTable = new ArrayList();
-        this.pId = UUID.randomUUID();
+        this.pid = UUID.randomUUID();
     }
 
 

@@ -9,23 +9,14 @@ import java.util.UUID;
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;
     private final List<PageEntity> realMemory;
-    private int availablePages;
     private final List<PageEntity> virtualMemory;
-    private final Dictionary<UUID, List<PageEntity>> memoryMap;
+    private final Dictionary<PTR, List<PageEntity>> memoryMap;
 
     public MMUEntity() {
-        this.realMemory = new ArrayList<>();
+        this.realMemory = new ArrayList<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
-        this.availablePages = 100;
         this.initializePages();
-    }
-
-    private void initializePages() {
-        for (int i = 0; i < 100; i++) {
-            PageEntity pageEntity = new PageEntity(i, false);
-            this.virtualMemory.add(pageEntity);
-        }
     }
 
     private int calculatePages(int size) {
@@ -36,38 +27,55 @@ public class MMUEntity {
         return result;
     }
 
-    private UUID requestPages(int numberOfPages) {
-        UUID ptr = UUID.randomUUID();
+    public PTR newMemory(UUID pid, int size) {
+        int requiredPages = calculatePages(size);
+        PTR ptr = new PTR(pid);
         List<PageEntity> pages = new ArrayList<>();
-        for (PageEntity pageEntity : realMemory) {
-            if (!pageEntity.isInUse()) {
-                pageEntity.setInUse(true);
-                pages.add(pageEntity);
+        for (int i = 0 ; i < realMemory.size() && requiredPages > 0; i++) {
+            if (realMemory.get(i) == null) { 
+                PageEntity page = new PageEntity(i, true);
+                realMemory.set(i, page);
+                pages.add(page);
+                requiredPages--;
+                continue;
             }
         }
-        this.memoryMap.put(ptr, pages);
-        return ptr;
-    }
-
-    public UUID newMemory(UUID pid, int size) {
-        int requiredPages = calculatePages(size);
-        if (availablePages < requiredPages) {
-            // TODO: aqui va el algoritmo de paginacion
-            return null;
+        if (requiredPages > 0) {
+            for (int i = 0 ; i < requiredPages > 0; i++) {
+                PageEntity page = new PageEntity(i, true);
+                //TODO: aqui va el algoritmo de paginacion
+            }
         }
-        UUID ptr = requestPages(requiredPages);
+        memoryMap.put(ptr, pages);
         return ptr;
     }
 
-    public void useMemory(UUID ptr) {
-
+     public void useMemory(PTR ptr) {
+        List<PageEntity> pages = memoryMap.get(ptr);
+        if (pages == null) {
+            System.out.println("Puntero no encontrado.");
+            return;
+        }
+        for (PageEntity page : pages) {
+            if (!page.isInRealMemory()) {
+            // TODO: aqui va el algoritmo de paginacion
+            }
+        }
     }
 
-    public void deleteMemory(UUID ptr) {
-
+    public void deleteMemory(PTR ptr) {
+        List<PageEntity> pages = memoryMap.get(ptr);
+        for (PageEntity page : pages) {
+            if (page.isInRealMemory()) {
+                realMemory.remove(page);
+                continue;
+            }
+            virtualMemory.remove(page);
+        }
+        memoryMap.remove(ptr);
     }
 
-    public void killProcces(UUID pid) {
+    public void killProcess(UUID pid) {
 
     }
 
