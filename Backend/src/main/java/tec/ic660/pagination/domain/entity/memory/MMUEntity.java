@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
+@Component
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;
     private final List<PageEntity> realMemory;
