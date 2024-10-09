@@ -2,34 +2,34 @@ package tec.ic660.pagination.domain.entity.cpu;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Random;
 
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
 public class ProcessEntity {
-    private UUID pid;
-    private List<UUID> sybomTable;
+    private int pid;
+    private List<PTR> sybomTable;
+    
 
     public ProcessEntity() {
-        this.sybomTable = new ArrayList<UUID>();
-        this.pid = UUID.randomUUID();
+        this.sybomTable = new ArrayList<PTR>();
+        this.pid = new Random().nextInt();
     }
 
-    public UUID getPid() {
+    public int getPid() {
         return pid;
     }
 
-    public void setPid(UUID pid) {
+    public void setPid(int pid) {
         this.pid = pid;
     }
 
-    public void addPtr2SymbolTable(PTR ptr){
-        sybomTable.add(pid);
+    public void addPtr2SymbolTable(PTR ptr) {
+        sybomTable.add(ptr);
     }
 
-    public List<UUID> getSymbolTable() {
+    public List<PTR> getSymbolTable() {
         return sybomTable;
     }
-
 
 }

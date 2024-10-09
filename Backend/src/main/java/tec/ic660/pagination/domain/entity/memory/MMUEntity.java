@@ -31,7 +31,7 @@ public class MMUEntity {
         return result;
     }
 
-    public PTR newMemory(UUID pid, int size) {
+    public PTR newMemory(int pid, int size) {
         int requiredPages = calculatePages(size);
         PTR ptr = new PTR(pid);
         List<PageEntity> pages = new ArrayList<>();
@@ -79,11 +79,11 @@ public class MMUEntity {
         memoryMap.remove(ptr);
     }
 
-    public void killProcess(UUID pid) {
+    public void killProcess(int pid) {
         Iterator<Map.Entry<PTR, List<PageEntity>>> iterator = memoryMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<PTR, List<PageEntity>> entry = iterator.next();
-            if (entry.getKey().getPid().equals(pid)) {
+            if (entry.getKey().getPid() == pid) {
                 iterator.remove();
             }
         }

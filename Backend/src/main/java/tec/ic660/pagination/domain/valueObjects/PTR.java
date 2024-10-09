@@ -4,22 +4,26 @@ import java.util.UUID;
 
 public class PTR {
     private UUID id;
-    private UUID pid;
+    private int pid;
 
-    public PTR(UUID pid) {
+    public PTR(int pid) {
         this.id = UUID.randomUUID();
         this.pid = pid;
     }
-    public UUID getId() { 
+
+    public UUID getId() {
         return id;
     }
+
     public void setId(UUID id) {
         this.id = id;
     }
-    public UUID getPid() {
+
+    public int getPid() {
         return pid;
     }
-    public void setPid(UUID pid) {
+
+    public void setPid(int pid) {
         this.pid = pid;
-    }  
+    }
 }
