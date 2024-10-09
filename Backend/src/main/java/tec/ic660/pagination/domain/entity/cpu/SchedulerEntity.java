@@ -16,4 +16,6 @@ public class SchedulerEntity {
     public void setProcessTable(List<ProcessEntity> processTable) {
         this.processTable = processTable;
     }
+
+    
 }
