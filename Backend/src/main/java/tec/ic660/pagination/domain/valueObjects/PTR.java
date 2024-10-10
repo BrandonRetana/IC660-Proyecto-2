@@ -1,21 +1,21 @@
 package tec.ic660.pagination.domain.valueObjects;
 
-import java.util.UUID;
 
 public class PTR {
-    private UUID id;
+    private int id;
     private int pid;
+    private static int counter = 0;
 
     public PTR(int pid) {
-        this.id = UUID.randomUUID();
+        this.id = ++counter;
         this.pid = pid;
     }
 
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(int id) {
         this.id = id;
     }
 
