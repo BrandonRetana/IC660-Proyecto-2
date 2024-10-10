@@ -48,7 +48,7 @@ public class MMUEntity {
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
                 PageEntity page = new PageEntity(i, true);
-                pagingAlgorithm.handlePageFault(page);
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
                 requiredPages--;
             }
         }
@@ -64,7 +64,7 @@ public class MMUEntity {
         }
         for (PageEntity page : pages) {
             if (!page.isInRealMemory()) {
-                pagingAlgorithm.handlePageFault(page);
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
             }
         }
     }
