@@ -82,7 +82,7 @@ public class MMUEntity {
         memoryMap.remove(ptr);
     }
 
-    public void killProcess(int pid) {
+    public void killProcessMemory(int pid) {
         Iterator<Map.Entry<PTR, List<PageEntity>>> iterator = memoryMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<PTR, List<PageEntity>> entry = iterator.next();

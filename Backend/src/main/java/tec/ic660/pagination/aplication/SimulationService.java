@@ -29,17 +29,22 @@ public class SimulationService {
 
     private void executeUse(String instruction) {
         int id = Integer.parseInt(instruction.substring(4, instruction.length() - 1));
-        //this.mmu.useMemory();
+        PTR ptr = this.scheduler.getPTRbyId(id);
+        this.mmu.useMemory(ptr);
     }
 
     private void executeDelete(String instruction) {
         int id = Integer.parseInt(instruction.substring(7, instruction.length() - 1));
+        PTR ptr = this.scheduler.getPTRbyId(id);
+        this.mmu.deleteMemory(ptr);
+        this.scheduler.deletePTRInProccess(id);
     }
 
     private void executeKill(String instruction) {
-        int id = Integer.parseInt(instruction.substring(5, instruction.length() - 1));
+        int pid = Integer.parseInt(instruction.substring(5, instruction.length() - 1));
+        this.mmu.killProcessMemory(pid);
+        this.scheduler.killProcess(pid);
     }
-
 
     public SimulationService() {
     }
