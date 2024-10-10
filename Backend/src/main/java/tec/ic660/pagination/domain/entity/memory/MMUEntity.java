@@ -5,9 +5,9 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.stereotype.Component;
 import tec.ic660.pagination.domain.valueObjects.PTR;
+import tec.ic660.pagination.domain.algorithms.*;
 
 @Component
 public class MMUEntity {
@@ -15,11 +15,13 @@ public class MMUEntity {
     private final List<PageEntity> realMemory;
     private final List<PageEntity> virtualMemory;
     private final Map<PTR, List<PageEntity>> memoryMap;
+    private PagingAlgorithm pagingAlgorithm;
 
     public MMUEntity() {
         this.realMemory = new ArrayList<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
+        this.pagingAlgorithm = new FIFOAlgorithm(); 
     }
 
     private int calculatePages(int size) {
@@ -38,6 +40,7 @@ public class MMUEntity {
             if (realMemory.get(i) == null) {
                 PageEntity page = new PageEntity(i, true);
                 realMemory.set(i, page);
+                pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
                 requiredPages--;
             }
@@ -45,7 +48,7 @@ public class MMUEntity {
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
                 PageEntity page = new PageEntity(i, true);
-                // TODO: aqui va el algoritmo de paginacion
+                pagingAlgorithm.handlePageFault(page);
                 requiredPages--;
             }
         }
@@ -61,7 +64,7 @@ public class MMUEntity {
         }
         for (PageEntity page : pages) {
             if (!page.isInRealMemory()) {
-                // TODO: aqui va el algoritmo de paginacion
+                pagingAlgorithm.handlePageFault(page);
             }
         }
     }
@@ -71,6 +74,7 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 realMemory.remove(page);
+                pagingAlgorithm.removePageFromAlgorithmStructure(page);
                 continue;
             }
             virtualMemory.remove(page);
@@ -83,9 +87,11 @@ public class MMUEntity {
         while (iterator.hasNext()) {
             Map.Entry<PTR, List<PageEntity>> entry = iterator.next();
             if (entry.getKey().getPid() == pid) {
+                deleteMemory(entry.getKey());
                 iterator.remove();
             }
         }
     }
+
 
 }
