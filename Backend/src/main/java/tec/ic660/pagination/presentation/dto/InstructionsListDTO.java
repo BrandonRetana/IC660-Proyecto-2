@@ -9,7 +9,7 @@ public class InstructionsListDTO {
         return instructions;
     }
 
-    public void setStrings(List<String> instructions) {
+    public void setInstructions(List<String> instructions) {
         this.instructions = instructions;
     }
 }

@@ -15,11 +15,19 @@ public class SimulationService {
     @Autowired
     private SchedulerEntity scheduler;
 
+    public SimulationService() {
+    }
+
     private Queue<String> instructionsQueue;
 
-    public void readFile(){
-        
+    public Queue<String> getInstructionsQueue() {
+        return instructionsQueue;
     }
+
+    public void setInstructionsQueue(Queue<String> instructionsQueue) {
+        this.instructionsQueue = instructionsQueue;
+    }
+
  
 
 }
