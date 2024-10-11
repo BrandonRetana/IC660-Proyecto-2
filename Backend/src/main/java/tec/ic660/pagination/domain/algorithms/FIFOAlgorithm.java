@@ -22,12 +22,12 @@ public class FIFOAlgorithm extends PagingAlgorithm {
         fifoQueue.remove(page);
     }
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
         if (fifoQueue.size() == realMemory.size()) {
             PageEntity pageToEvict = fifoQueue.poll();
             movePageToVirtualMemory(virtualMemory, pageToEvict);
         }
-        movePageToRealMemory(realMemory, newPage);
-        fifoQueue.add(newPage);
+        movePageToRealMemory(realMemory, page);
+        fifoQueue.add(page);
     }
 }

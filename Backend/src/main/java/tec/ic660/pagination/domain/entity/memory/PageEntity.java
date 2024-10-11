@@ -4,14 +4,14 @@ public class PageEntity {
     private final int id;
     private final int physicalAddres;
     private boolean isInRealMemory;
-    private boolean used;
+    private boolean referenceBit ;
     private static int counter = 0;
     
     public PageEntity(int physicalAddres, boolean isInRealMemory) {
         this.id = ++counter;
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
-        this.used = false;
+        this.referenceBit = false;
     }
 
     public int getId() {
@@ -30,11 +30,11 @@ public class PageEntity {
         this.isInRealMemory = isInRealMemory;
     }
 
-    public boolean isUsed() {
-        return used;
+    public boolean getReferenceBit() {
+        return referenceBit;
     }
 
-    public void setUsed(boolean used) {
-        this.used = used;
+    public void setReferenceBit(boolean referenceBit) {
+        this.referenceBit = referenceBit;
     }
 }

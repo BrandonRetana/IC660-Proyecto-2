@@ -66,7 +66,11 @@ public class MMUEntity {
             if (!page.isInRealMemory()) {
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
             }
+            page.setReferenceBit(true);
         }
+        if (pagingAlgorithm instanceof MRUAlgorithm) { // Si el algoritmo es MRU agregamos la pagina a la pila
+            ((MRUAlgorithm) pagingAlgorithm).pushPageToTop(page);
+        }    
     }
 
     public void deleteMemory(PTR ptr) {
