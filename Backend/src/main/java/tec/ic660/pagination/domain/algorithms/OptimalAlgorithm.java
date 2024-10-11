@@ -69,4 +69,5 @@ public class OptimalAlgorithm extends PagingAlgorithm {
     private int getMaxRealMemorySize() {
         return 100; // Aquí defines el tamaño máximo de la memoria real
     }
+
 }

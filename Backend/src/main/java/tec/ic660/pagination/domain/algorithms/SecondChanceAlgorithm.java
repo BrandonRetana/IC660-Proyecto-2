@@ -29,7 +29,7 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
             PageEntity page = secondChanceQueue.poll(); // Quitamos la página de la cola
             
             if (page.getReferenceBit()) { //si la pagina se usó
-                page.setReferenceBit()(false); // Se resetea el bit de uso
+                page.setReferenceBit(false); // Se resetea el bit de uso
                 secondChanceQueue.add(page); // Reinsertamos la página al final de la cola
             } else {
                 movePageToVirtualMemory(virtualMemory, page);

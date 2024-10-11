@@ -21,7 +21,7 @@ public class MMUEntity {
         this.realMemory = new ArrayList<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
-        this.pagingAlgorithm = new FIFOAlgorithm(); 
+        this.pagingAlgorithm = new FIFOAlgorithm();
     }
 
     private int calculatePages(int size) {
@@ -67,10 +67,11 @@ public class MMUEntity {
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
             }
             page.setReferenceBit(true);
+            if (pagingAlgorithm instanceof MRUAlgorithm) { 
+                ((MRUAlgorithm) pagingAlgorithm).pushPageToTop(page);
+            }
         }
-        if (pagingAlgorithm instanceof MRUAlgorithm) { // Si el algoritmo es MRU agregamos la pagina a la pila
-            ((MRUAlgorithm) pagingAlgorithm).pushPageToTop(page);
-        }    
+
     }
 
     public void deleteMemory(PTR ptr) {
@@ -96,6 +97,5 @@ public class MMUEntity {
             }
         }
     }
-
 
 }
