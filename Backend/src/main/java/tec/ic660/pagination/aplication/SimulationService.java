@@ -11,7 +11,7 @@ import tec.ic660.pagination.domain.entity.cpu.SchedulerEntity;
 import tec.ic660.pagination.domain.entity.memory.MMUEntity;
 import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import tec.ic660.pagination.domain.valueObjects.PTR;
-import tec.ic660.pagination.infraestructure.GenerateInstructions;
+import tec.ic660.pagination.infraestructure.InstructionGenerator;
 import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
 import java.util.Comparator;
@@ -28,7 +28,7 @@ public class SimulationService {
     private SchedulerEntity scheduler;
 
     @Autowired
-    private GenerateInstructions generateInstructions;
+    private InstructionGenerator instructionGenerator;
 
     private PagingAlgorithm fifoAlgorithm = new RandomAlgorithm();
 
@@ -41,7 +41,7 @@ public class SimulationService {
         PTR ptr = this.mmu.newMemory(id, size);
         this.scheduler.addPtr2Process(id, ptr);
     }
-    
+
     private void executeUse(String instruction) {
         int id = Integer.parseInt(instruction.substring(4, instruction.length() - 1));
         PTR ptr = this.scheduler.getPTRbyId(id);
@@ -66,18 +66,18 @@ public class SimulationService {
 
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
-            if (instruction.startsWith("new")) {
-                this.executeNew(instruction);
-            } else if (instruction.startsWith("use")) {
-                this.executeUse(instruction);
-            } else if (instruction.startsWith("delete")) {
-                this.executeDelete(instruction);
-            } else if (instruction.startsWith("kill")) {
-                this.executeKill(instruction);
-            } else {
-                System.out.println("Unknown instruction: " + instruction);
-            }
-        
+        if (instruction.startsWith("new")) {
+            this.executeNew(instruction);
+        } else if (instruction.startsWith("use")) {
+            this.executeUse(instruction);
+        } else if (instruction.startsWith("delete")) {
+            this.executeDelete(instruction);
+        } else if (instruction.startsWith("kill")) {
+            this.executeKill(instruction);
+        } else {
+            System.out.println("Unknown instruction: " + instruction);
+        }
+
     }
 
     public Queue<String> getInstructionsQueue() {
@@ -130,35 +130,14 @@ public class SimulationService {
     }
 
     public void setSimulationConfig() {
-        /*
-         * Queue<String> randomInstructions = generateInstructions.getInstructions(500,
-         * 50);
-         * setInstructionsQueue(randomInstructions);
-         * System.out.println(randomInstructions);
-         * }
-         */
-        Queue<String> instructionsQueue = new LinkedList<>();
 
-        instructionsQueue.add("new(1,409599)");
-        instructionsQueue.add("use(1)");
-        instructionsQueue.add("new(1,10000)");
-        instructionsQueue.add("use(1)");
-        instructionsQueue.add("use(2)");
-        instructionsQueue.add("new(2,5000)");
-        instructionsQueue.add("use(3)");
-        instructionsQueue.add("use(1)");
-        instructionsQueue.add("new(2,500)");
-        instructionsQueue.add("use(4)");
-        instructionsQueue.add("delete(1)");
-        instructionsQueue.add("use(2)");
-        instructionsQueue.add("use(3)");
-        instructionsQueue.add("delete(2)");
-        instructionsQueue.add("kill(1)");
-        instructionsQueue.add("kill(2)");
-        setInstructionsQueue(instructionsQueue);
+        Queue<String> randomInstructions = instructionGenerator.generateInstructions(10, 50, 500);
+        setInstructionsQueue(randomInstructions);
+        System.out.println(randomInstructions);
 
-    this.mmu.setPagingAlgorithm(this.fifoAlgorithm);
+        this.mmu.setPagingAlgorithm(this.fifoAlgorithm);
+
+        System.out.println("\n\nSize: \n\n"+randomInstructions.size());
     }
-
 
 }
