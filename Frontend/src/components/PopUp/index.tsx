@@ -20,7 +20,7 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
   const handleMethodChange = (method: string) => {
     setSelectedMethod(method);
     setFileGeneration(method === "Archivo");
-    setAutomaticGeneration(method === "Automatica");
+    setAutomaticGeneration(method === "Automática");
   };
 
   useEffect(() => {
