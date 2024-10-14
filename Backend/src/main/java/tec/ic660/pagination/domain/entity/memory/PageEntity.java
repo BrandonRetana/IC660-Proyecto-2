@@ -2,7 +2,7 @@ package tec.ic660.pagination.domain.entity.memory;
 
 public class PageEntity {
     private final int id;
-    private final int physicalAddres;
+    private int physicalAddres;
     private boolean isInRealMemory;
     private boolean referenceBit ;
     private int ptrId;
@@ -46,5 +46,8 @@ public class PageEntity {
     }
     public void setPtrId(int ptrId) {
         this.ptrId = ptrId;
+
+    public void setPhysicalAddress(int physicalAddres) {
+        this.physicalAddres = physicalAddres;
     }
 }
