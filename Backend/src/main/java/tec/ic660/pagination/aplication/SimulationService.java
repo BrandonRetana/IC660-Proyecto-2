@@ -78,7 +78,15 @@ public class SimulationService {
         this.instructionsQueue = instructionsQueue;
     }
 
-    public List<TableRawDTO> getTableData(List<PageEntity> realMemory, List<PageEntity> virtualMemory) {
+    public List<TableRawDTO> getDataTable(Integer table){
+        if (table == 1) {
+            return generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+        }
+        return generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+    }
+
+
+    private List<TableRawDTO> generateJsonTableRawData(List<PageEntity> realMemory, List<PageEntity> virtualMemory) {
         List<TableRawDTO> logicalMemoryData = new LinkedList<>();
         List<PageEntity> logicalMemory = new LinkedList<>(realMemory);
         logicalMemory.addAll(virtualMemory);

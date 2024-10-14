@@ -99,4 +99,12 @@ public class MMUEntity {
         }
     }
 
+    public List<PageEntity> getRealMemory() {
+        return realMemory;
+    }
+
+    public List<PageEntity> getVirtualMemory() {
+        return virtualMemory;
+    }
+
 }
