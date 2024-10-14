@@ -5,8 +5,13 @@ import org.springframework.stereotype.Service;
 
 import tec.ic660.pagination.domain.entity.cpu.SchedulerEntity;
 import tec.ic660.pagination.domain.entity.memory.MMUEntity;
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import tec.ic660.pagination.domain.valueObjects.PTR;
+import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 @Service
@@ -71,6 +76,41 @@ public class SimulationService {
 
     public void setInstructionsQueue(Queue<String> instructionsQueue) {
         this.instructionsQueue = instructionsQueue;
+    }
+
+    public List<TableRawDTO> getTableData(List<PageEntity> realMemory, List<PageEntity> virtualMemory) {
+        List<TableRawDTO> logicalMemoryData = new LinkedList<>();
+        List<PageEntity> logicalMemory = new LinkedList<>(realMemory);
+        logicalMemory.addAll(virtualMemory);
+        logicalMemory.sort(Comparator.comparing(PageEntity::getId));
+        TableRawDTO dto;
+
+        for (int i = 0; i < logicalMemory.size(); i++) {
+            PageEntity pageEntity = logicalMemory.get(i);
+            dto = new TableRawDTO();
+            // Set page ID
+            dto.setPageId(pageEntity.getId());
+            //Set PID
+            dto.setPid(this.scheduler.getPTRbyId(pageEntity.getPtrId()).getPid());
+            //Set logical memory position
+            dto.setLAddr(i);
+            // Set memory real or virtual
+            if (pageEntity.isInRealMemory()) {
+                dto.setLoaded("X");
+            }
+            if (pageEntity.isInRealMemory())  {
+                dto.setMAddr(pageEntity.getPhysicalAddres());
+            }
+            else{
+                dto.setDAddr(pageEntity.getPhysicalAddres());
+            }
+            //Set mark
+            dto.setMark("X");
+            //Set time loaded
+            dto.setLoadedT("1s");
+        }
+
+        return logicalMemoryData;
     }
 
 }

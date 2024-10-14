@@ -3,6 +3,7 @@ package tec.ic660.pagination.presentation.controller;
 import tec.ic660.pagination.aplication.SimulationService;
 import tec.ic660.pagination.presentation.dto.InstructionsListDTO;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class SimulationController {
 
     private Queue<String> stringQueue = new LinkedList<String>();
 
-    @PostMapping("/get/instructions")
+    @PostMapping("/sent/instructions")
     public ResponseEntity<String> getInstructions(@RequestBody InstructionsListDTO request) {
         try {
             if (request.getInstructions() == null || request.getInstructions().isEmpty()) {
@@ -38,5 +39,11 @@ public class SimulationController {
             return new ResponseEntity<String>("An error occurred while processing the request",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/get/data")
+    public ResponseEntity<String> getData(){
+
+        return null;
     }
 }
