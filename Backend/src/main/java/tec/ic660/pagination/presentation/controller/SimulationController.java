@@ -24,6 +24,11 @@ public class SimulationController {
 
     private Queue<String> stringQueue = new LinkedList<String>();
 
+    @PostMapping("/sent/config")
+    public void setConfig(){
+        this.service.setSimulationConfig();
+    }
+
     @PostMapping("/sent/instructions")
     public ResponseEntity<String> getInstructions(@RequestBody InstructionsListDTO request) {
         try {

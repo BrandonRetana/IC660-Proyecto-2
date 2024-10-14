@@ -7,6 +7,7 @@ import tec.ic660.pagination.domain.entity.cpu.SchedulerEntity;
 import tec.ic660.pagination.domain.entity.memory.MMUEntity;
 import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import tec.ic660.pagination.domain.valueObjects.PTR;
+import tec.ic660.pagination.infraestructure.GenerateInstructions;
 import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
 import java.util.Comparator;
@@ -21,6 +22,9 @@ public class SimulationService {
 
     @Autowired
     private SchedulerEntity scheduler;
+
+    @Autowired
+    private GenerateInstructions generateInstructions;
 
     private Queue<String> instructionsQueue;
 
@@ -119,6 +123,12 @@ public class SimulationService {
         }
 
         return logicalMemoryData;
+    }
+
+    public void setSimulationConfig(){
+        Queue<String> randomInstructions = generateInstructions.getInstructions(50, 500);
+        setInstructionsQueue(randomInstructions);
+        System.out.println(randomInstructions);
     }
 
 }
