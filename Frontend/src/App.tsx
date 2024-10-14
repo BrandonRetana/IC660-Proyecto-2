@@ -7,6 +7,7 @@ import ProcessesSimTime from "./components/ProcessesSimTime";
 import PopUp from "./components/PopUp";
 
 import { useEffect, useState } from "react";
+import React from "react";
 
 function App() {
   const [showPopUp, setShowPopUp] = useState(true);
