@@ -77,7 +77,7 @@ public class GenerateInstructions {
 
     private String generateNewInstruction(int numberOfProcess, int pid) {
         int size = getRandomBetween(MIN_PAGE_SIZE, MAX_PAGE_SIZE);
-        Integer numberOfPTRs = this.process.get(pid);
+        Integer numberOfPTRs = this.processPTR.get(pid);
         this.processPTR.put(pid, numberOfPTRs + 1);
         decrementValue(pid);
         return getStringInstruction(pid, size, TYPE_NEW);
@@ -91,8 +91,7 @@ public class GenerateInstructions {
 
     private String generateDeleteInstruction(Integer pid) {
         Integer ptr = this.processPTR.get(pid);
-        Integer numberOfPtrs = this.process.get(pid);
-        this.process.put(pid, numberOfPtrs - 1);
+        this.processPTR.put(pid, ptr - 1);
         decrementValue(pid);
         return getStringInstruction(ptr, ptr, TYPE_DELETE);
     }
