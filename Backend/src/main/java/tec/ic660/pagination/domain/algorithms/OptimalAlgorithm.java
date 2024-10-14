@@ -1,7 +1,6 @@
 package tec.ic660.pagination.domain.algorithms;
 
 import tec.ic660.pagination.domain.entity.memory.PageEntity;
-import tec.ic660.pagination.domain.valueObjects.PTR;
 
 import java.util.*;
 

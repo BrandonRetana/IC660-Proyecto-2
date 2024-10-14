@@ -46,6 +46,7 @@ public class PageEntity {
     }
     public void setPtrId(int ptrId) {
         this.ptrId = ptrId;
+    }
 
     public void setPhysicalAddress(int physicalAddres) {
         this.physicalAddres = physicalAddres;
