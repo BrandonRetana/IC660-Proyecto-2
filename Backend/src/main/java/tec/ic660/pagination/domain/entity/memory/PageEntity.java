@@ -33,8 +33,13 @@ public class PageEntity {
     public boolean getReferenceBit() {
         return referenceBit;
     }
-
+    
     public void setReferenceBit(boolean referenceBit) {
         this.referenceBit = referenceBit;
     }
+
+    public void setPhysicalAddres(int physicalAddres) {
+        this.physicalAddres = physicalAddres;
+    }
+    
 }
