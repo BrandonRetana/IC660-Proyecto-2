@@ -6,7 +6,7 @@ public class PageEntity {
     private boolean isInRealMemory;
     private boolean referenceBit;
     private int ptrId;
-    private static int counter = 0;
+    private static int counter = -1;
     
     public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId) {
         this.id = ++counter;

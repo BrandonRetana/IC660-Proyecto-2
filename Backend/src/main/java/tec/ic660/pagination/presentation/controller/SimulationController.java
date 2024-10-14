@@ -7,6 +7,7 @@ import tec.ic660.pagination.presentation.dto.TableRawDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import java.util.Queue;
 import java.util.LinkedList;
 import java.util.List;
 
+@RestController
 @RequestMapping("/api")
 public class SimulationController {
 
@@ -46,6 +48,11 @@ public class SimulationController {
             return new ResponseEntity<String>("An error occurred while processing the request",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/get/execute/step")
+    public void execute(){
+        this.service.executeNextStep();
     }
 
     @GetMapping("/get/data/algorithm")

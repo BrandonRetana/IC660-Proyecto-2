@@ -1,6 +1,7 @@
 package tec.ic660.pagination.domain.entity.memory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -17,12 +18,14 @@ public class MMUEntity {
     private final List<PageEntity> virtualMemory;
     private final Map<PTR, List<PageEntity>> memoryMap;
     private PagingAlgorithm pagingAlgorithm;
+    private Integer numberOfMemoryPages;
 
     public MMUEntity() {
-        this.realMemory = new ArrayList<>(PAGES_IN_MEMORY);
+        this.realMemory = new ArrayList<>(Collections.nCopies(100, null));
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
         this.pagingAlgorithm = new FIFOAlgorithm();
+        this.numberOfMemoryPages = 0;
     }
 
     private int calculatePages(int size) {
@@ -44,12 +47,13 @@ public class MMUEntity {
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
                 requiredPages--;
+                numberOfMemoryPages++;
             }
         }
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
                 PageEntity page = new PageEntity(i, true, pid);
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, numberOfMemoryPages);
                 requiredPages--;
             }
         }
@@ -65,7 +69,7 @@ public class MMUEntity {
         }
         for (PageEntity page : pages) {
             if (!page.isInRealMemory() ) {
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, numberOfMemoryPages);
             }
             page.setReferenceBit(true);
             if (pagingAlgorithm instanceof MRUAlgorithm) { 
@@ -79,7 +83,9 @@ public class MMUEntity {
         List<PageEntity> pages = memoryMap.get(ptr);
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
+                Integer pageIndex = realMemory.indexOf(page);
                 realMemory.remove(page);
+                realMemory.add(pageIndex, null);
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
                 continue;
             }
@@ -88,13 +94,27 @@ public class MMUEntity {
         memoryMap.remove(ptr);
     }
 
+    private void deleteMemory(PTR ptr, Boolean kill) {
+        List<PageEntity> pages = memoryMap.get(ptr);
+        for (PageEntity page : pages) {
+            if (page.isInRealMemory()) {
+                Integer pageIndex = realMemory.indexOf(page);
+                realMemory.remove(page);
+                realMemory.add(pageIndex, null);
+                pagingAlgorithm.removePageFromAlgorithmStructure(page);
+                continue;
+            }
+            virtualMemory.remove(page);
+        }
+    }
+
     public void killProcessMemory(int pid) {
         Iterator<Map.Entry<PTR, List<PageEntity>>> iterator = memoryMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Map.Entry<PTR, List<PageEntity>> entry = iterator.next();
             if (entry.getKey().getPid() == pid) {
-                deleteMemory(entry.getKey());
-                iterator.remove();
+                deleteMemory(entry.getKey(), true);
+                iterator.remove(); 
             }
         }
     }
@@ -106,5 +126,11 @@ public class MMUEntity {
     public List<PageEntity> getVirtualMemory() {
         return virtualMemory;
     }
+
+    public void setPagingAlgorithm(PagingAlgorithm algorithm) {
+        this.pagingAlgorithm = algorithm;
+    }
+
+    
 
 }

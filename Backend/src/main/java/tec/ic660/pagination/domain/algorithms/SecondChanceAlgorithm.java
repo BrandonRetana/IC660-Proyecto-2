@@ -24,8 +24,8 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
-        if (realMemory.size() == 100) {     
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer numberOfMemoryPages) {
+        if (numberOfMemoryPages == 100) {     
             while (true) {
                 PageEntity pageToEvict = secondChanceQueue.poll();     
                 if (pageToEvict.getReferenceBit()) { 
@@ -34,6 +34,7 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
                 } else {
                     int freeFrame = pageToEvict.getPhysicalAddres();
                     realMemory.set(freeFrame, pageToEvict);
+                    page.setPhysicalAddres(freeFrame);
                     movePageToVirtualMemory(virtualMemory, pageToEvict);
                     break; 
                 }
