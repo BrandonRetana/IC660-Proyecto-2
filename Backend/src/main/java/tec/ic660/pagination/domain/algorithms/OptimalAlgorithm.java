@@ -1,73 +1,74 @@
 package tec.ic660.pagination.domain.algorithms;
 
 import tec.ic660.pagination.domain.entity.memory.PageEntity;
-import java.util.List;
+import tec.ic660.pagination.domain.valueObjects.PTR;
+
+import java.util.*;
 
 public class OptimalAlgorithm extends PagingAlgorithm {
 
-    public OptimalAlgorithm() {
-        // Constructor del algoritmo óptimo
-    }
+    private Map<Integer, List<Integer>> futurePageUsage;
 
+    public OptimalAlgorithm(Queue<String> instructionsQueue) {
+        this.futurePageUsage = new HashMap<>();
+        preprocessInstructions(instructionsQueue);
+    }
     @Override
     public void addPageToAlgorithmStructure(PageEntity page) {
-        // No es necesario un seguimiento adicional en el algoritmo óptimo
     }
 
     @Override
     public void removePageFromAlgorithmStructure(PageEntity page) {
-        // No es necesario un seguimiento adicional en el algoritmo óptimo
+    }
+    private void preprocessInstructions(Queue<String> instructionsQueue) {
+        int instructionIndex = 0;
+
+        for (String instruction : instructionsQueue) {
+            String[] parts = instruction.split("\\(|,|\\)");
+            String operation = parts[0].trim();
+
+            if (operation.equals("use")) {
+                int ptr = Integer.parseInt(parts[1].trim());
+                futurePageUsage.putIfAbsent(ptr, new ArrayList<>());
+                futurePageUsage.get(ptr).add(instructionIndex);
+            }
+            instructionIndex++;
+        }
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage, List<PageEntity> futurePages) {
-        if (realMemory.size() < getMaxRealMemorySize()) {
-            // Si hay espacio en la memoria real, simplemente agregamos la página
-            movePageToRealMemory(realMemory, newPage);
-        } else {
-            // Si no hay espacio, seleccionamos la página que no será usada en el futuro por más tiempo
-            PageEntity pageToEvict = findOptimalPageToEvict(realMemory, futurePages);
-            movePageToVirtualMemory(virtualMemory, pageToEvict); // Mover la página a la memoria virtual
-            movePageToRealMemory(realMemory, newPage); // Añadir la nueva página a la memoria real
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
+        if (realMemory.size() == 100) { // Si la memoria real está llena
+            PageEntity pageToEvict = findOptimalPageToEvict(realMemory);
+            movePageToVirtualMemory(virtualMemory, pageToEvict);
         }
+        movePageToRealMemory(realMemory, newPage);
     }
 
-    private PageEntity findOptimalPageToEvict(List<PageEntity> realMemory, List<PageEntity> futurePages) {
-        int farthestPageIndex = -1;
-        int farthestDistance = -1;
+    private PageEntity findOptimalPageToEvict(List<PageEntity> realMemory) {
+        int farthestUse = -1;
+        PageEntity pageToEvict = null;
 
-        // Iterar sobre las páginas en la memoria real para encontrar la que no se usa en más tiempo
-        for (int i = 0; i < realMemory.size(); i++) {
-            PageEntity currentPage = realMemory.get(i);
-            int nextUseIndex = findNextUseIndex(currentPage, futurePages);
+        // Iteramos sobre todas las páginas de la memoria real
+        for (PageEntity page : realMemory) {
+            if (page == null) continue;
 
-            if (nextUseIndex == -1) {
-                // Si la página no se usará más, es la mejor opción para reemplazo
-                return currentPage;
-            } else if (nextUseIndex > farthestDistance) {
-                // Si la página se usa pero mucho más adelante, actualizamos la que más tarda en usarse
-                farthestDistance = nextUseIndex;
-                farthestPageIndex = i;
+            // Buscamos cuándo se volverá a usar el puntero (ptr) asociado a la página
+            List<Integer> futureUses = futurePageUsage.getOrDefault(page.getPtrId(), new ArrayList<>());
+
+            // Si la página no se va a usar más en el futuro, la seleccionamos para reemplazo
+            if (futureUses.isEmpty()) {
+                return page;
+            } else {
+                // Si la página se usará en el futuro, tomamos el uso más lejano
+                int nextUse = futureUses.remove(0); // Tomamos el próximo uso
+                if (nextUse > farthestUse) {
+                    farthestUse = nextUse;
+                    pageToEvict = page;
+                }
             }
         }
 
-        // Retornar la página que será usada más tarde
-        return realMemory.get(farthestPageIndex);
+        return pageToEvict;
     }
-
-    private int findNextUseIndex(PageEntity page, List<PageEntity> futurePages) {
-        // Buscar cuándo la página será usada en el futuro
-        for (int i = 0; i < futurePages.size(); i++) {
-            if (futurePages.get(i).getPageNumber() == page.getPageNumber()) {
-                return i;
-            }
-        }
-        // Si no se encuentra en el futuro, retornamos -1
-        return -1;
-    }
-    
-    private int getMaxRealMemorySize() {
-        return 100; // Aquí defines el tamaño máximo de la memoria real
-    }
-
 }

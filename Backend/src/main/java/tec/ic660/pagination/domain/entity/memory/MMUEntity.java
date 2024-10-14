@@ -12,13 +12,14 @@ import tec.ic660.pagination.domain.algorithms.*;
 @Component
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;
+    private final int PAGES_IN_MEMORY = 100;
     private final List<PageEntity> realMemory;
     private final List<PageEntity> virtualMemory;
     private final Map<PTR, List<PageEntity>> memoryMap;
     private PagingAlgorithm pagingAlgorithm;
 
     public MMUEntity() {
-        this.realMemory = new ArrayList<>(100);
+        this.realMemory = new ArrayList<>(PAGES_IN_MEMORY);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
         this.pagingAlgorithm = new FIFOAlgorithm();
@@ -36,9 +37,9 @@ public class MMUEntity {
         int requiredPages = calculatePages(size);
         PTR ptr = new PTR(pid);
         List<PageEntity> pages = new ArrayList<>();
-        for (int i = 0; i < realMemory.size() && requiredPages > 0; i++) {
+        for (int i = 0; i < PAGES_IN_MEMORY && requiredPages > 0; i++) {
             if (realMemory.get(i) == null) {
-                PageEntity page = new PageEntity(i, true);
+                PageEntity page = new PageEntity(i, true, pid);
                 realMemory.set(i, page);
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
@@ -63,7 +64,7 @@ public class MMUEntity {
             return;
         }
         for (PageEntity page : pages) {
-            if (!page.isInRealMemory()) {
+            if (!page.isInRealMemory() ) {
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);
             }
             page.setReferenceBit(true);

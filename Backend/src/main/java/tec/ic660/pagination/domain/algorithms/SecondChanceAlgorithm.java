@@ -25,18 +25,22 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
 
     @Override
     public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
-        while (true) {
-            PageEntity page = secondChanceQueue.poll(); // Quitamos la página de la cola
-            
-            if (page.getReferenceBit()) { //si la pagina se usó
-                page.setReferenceBit(false); // Se resetea el bit de uso
-                secondChanceQueue.add(page); // Reinsertamos la página al final de la cola
-            } else {
-                movePageToVirtualMemory(virtualMemory, page);
-                break; // Salimos del bucle, ya que encontramos la página a reemplazar
+        if (realMemory.size() == 100) {     
+            while (true) {
+                PageEntity pageToEvict = secondChanceQueue.poll();     
+                if (pageToEvict.getReferenceBit()) { 
+                    pageToEvict.setReferenceBit()(false); 
+                    secondChanceQueue.add(pageToEvict); 
+                } else {
+                    int freeFrame = pageToEvict.getPhysicalAddres();
+                    realMemory.set(freeFrame, pageToEvict);
+                    movePageToVirtualMemory(virtualMemory, pageToEvict);
+                    break; 
+                }
             }
+        }else{
+            movePageToRealMemory(realMemory, page);
         }
-        movePageToRealMemory(realMemory, newPage);
-        secondChanceQueue.add(newPage); // Añadimos la nueva página a la cola
+        secondChanceQueue.add(page);      
     }
 }

@@ -10,7 +10,7 @@ public abstract class PagingAlgorithm {
     public abstract void removePageFromAlgorithmStructure(PageEntity page);
 
     protected void movePageToRealMemory(List<PageEntity> realMemory, PageEntity page) {
-        for (int i = 0; i < realMemory.size(); i++) {
+        for (int i = 0; i < 100; i++) {
             if (realMemory.get(i) == null) {
                 realMemory.set(i, page);
                 page.setInRealMemory(true);

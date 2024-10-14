@@ -25,20 +25,20 @@ public class MRUAlgorithm extends PagingAlgorithm {
 
     @Override
     public void removePageFromAlgorithmStructure(PageEntity page) {
-        mruStack.remove(page); // Remover la página de la pila
+        mruStack.remove(page); 
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
-        if (mruStack.size() == realMemory.size()) {
-            // Se saca la página más recientemente usada, que está en la cima de la pila
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
+        if (realMemory.size() == 100) {
             PageEntity pageToEvict = mruStack.pop();
-            movePageToVirtualMemory(virtualMemory, pageToEvict); // Mover la página a la memoria virtual
+            int freeFrame = pageToEvict.getPhysicalAddres();
+            movePageToVirtualMemory(virtualMemory, pageToEvict); 
+            realMemory.set(freeFrame, page);
+        }else{
+            movePageToRealMemory(realMemory, page);
         }
-
-        // Añadir la nueva página a la memoria real
-        movePageToRealMemory(realMemory, newPage);
-        mruStack.push(newPage); // Añadir la nueva página al tope de la pila
+        mruStack.push(page); 
     }
 
 }

@@ -5,13 +5,15 @@ public class PageEntity {
     private final int physicalAddres;
     private boolean isInRealMemory;
     private boolean referenceBit ;
+    private int ptrId;
     private static int counter = 0;
     
-    public PageEntity(int physicalAddres, boolean isInRealMemory) {
+    public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId) {
         this.id = ++counter;
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
         this.referenceBit = false;
+        this.ptrId = ptrId;
     }
 
     public int getId() {
@@ -21,7 +23,9 @@ public class PageEntity {
     public int getPhysicalAddres() {
         return physicalAddres;
     }
-
+    public void setPhysicalAddres(int physicalAddres) {
+        this.physicalAddres = physicalAddres;
+    }
     public boolean isInRealMemory() {
         return isInRealMemory;
     }
@@ -33,13 +37,14 @@ public class PageEntity {
     public boolean getReferenceBit() {
         return referenceBit;
     }
-    
+
     public void setReferenceBit(boolean referenceBit) {
         this.referenceBit = referenceBit;
     }
-
-    public void setPhysicalAddres(int physicalAddres) {
-        this.physicalAddres = physicalAddres;
+    public int getPtrId() {
+        return ptrId;
     }
-    
+    public void setPtrId(int ptrId) {
+        this.ptrId = ptrId;
+    }
 }

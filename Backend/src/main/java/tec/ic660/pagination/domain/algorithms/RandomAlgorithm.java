@@ -23,10 +23,14 @@ public class RandomAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
-            int randomIndex = random.nextInt(realMemory.size());
-            PageEntity pageToEvict = realMemory.get(randomIndex);
-            movePageToVirtualMemory(virtualMemory, pageToEvict);
-            realMemory.set(randomIndex, newPage);  
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
+        if (realMemory.size() == 100) {
+            PageEntity pageToEvict = realMemory.get(random.nextInt(realMemory.size()));
+            int freeFrame = pageToEvict.getPhysicalAddres();
+            movePageToVirtualMemory(virtualMemory, pageToEvict);   
+            realMemory.set(freeFrame, page);  
+        }else{
+            movePageToRealMemory(realMemory, page);
+        }
     }
 }
