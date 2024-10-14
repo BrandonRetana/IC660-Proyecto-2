@@ -1,0 +1,52 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.Monitor {
+  width: 90%;
+  margin: 1rem auto;
+}
+
+.tables {
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.left,
+.right {
+  width: 50%;
+  align-items: center;
+  gap: 1rem;
+}
+
+.RamSummary {
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.menu {
+  position: fixed;
+  background-color: #427baf;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  bottom: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.5s ease all;
+  i {
+    color: #fff;
+    font-size: 2rem;
+  }
+}
+
+.menu:hover {
+  width: 4.5rem;
+  height: 4.5rem;
+  transition: 0.5s ease all;
+}
