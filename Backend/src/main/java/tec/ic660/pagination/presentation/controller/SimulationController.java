@@ -60,4 +60,9 @@ public class SimulationController {
         return tableData;
     }
 
+    @GetMapping("/ping")
+    public String getPing(){
+        return "pong";
+    }
+
 }
