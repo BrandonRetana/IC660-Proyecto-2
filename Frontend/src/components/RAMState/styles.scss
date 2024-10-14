@@ -1,0 +1,22 @@
+.table-container {
+  display: flex;
+  justify-content: center;
+  background-color: #333333;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.color-table {
+  border-collapse: collapse;
+}
+
+.color-table td {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #636363;
+}
+
+.table-title {
+  padding: 10px;
+  color: #e9e9e9;
+}
