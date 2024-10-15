@@ -5,7 +5,7 @@ import java.util.List;
 
 public abstract class PagingAlgorithm {
     
-    public abstract void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer numberOfMemoryPages);
+    public abstract void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer pagesInMemory);
     public abstract void addPageToAlgorithmStructure(PageEntity page);
     public abstract void removePageFromAlgorithmStructure(PageEntity page);
 
