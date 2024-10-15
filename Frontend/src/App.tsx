@@ -29,7 +29,9 @@ function App() {
         console.error("Error al ejecutar el paso:", error);
       }
     };
-    execute();
+    if (executing) {
+      execute();
+    }
   }, [data, executing]);
 
   return (

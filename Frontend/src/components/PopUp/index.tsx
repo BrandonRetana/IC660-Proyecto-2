@@ -53,7 +53,6 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
 
   const handleSubmit = async () => {
     if (!instructions) {
-      setInstructions("response");
       const configData = {
         seed: isAutomatic ? Number(seed) : undefined,
         algorithm: algorithmMapping[selectedOption] || 0,
@@ -63,6 +62,7 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
       try {
         const response = await sendConfig(configData);
         console.log("Configuración enviada con éxito:", response);
+        setInstructions(response);
       } catch (error) {
         console.error("Error al enviar la configuración:", error);
       }
