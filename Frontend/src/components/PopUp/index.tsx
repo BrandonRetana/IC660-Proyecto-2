@@ -21,6 +21,13 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
     selectedMethod === "Automática"
   );
 
+  const algorithmMapping: { [key: string]: number } = {
+    FIFO: 1,
+    SC: 2,
+    MRU: 3,
+    RND: 4,
+  };
+
   const handleMethodChange = (method: string) => {
     setSelectedMethod(method);
     setFileGeneration(method === "Archivo");
@@ -34,10 +41,12 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
   }, [selectedMethod]);
 
   const handleSubmit = async () => {
+    const algorithmValue = algorithmMapping[selectedOption] || 0;
+
     const configData = {
       generationMethod: selectedMethod,
       seed: automaticGeneration ? seed : undefined,
-      algorithm: selectedOption,
+      algorithm: algorithmValue,
       processes: processes ?? 0,
       operations: operations ?? 0,
     };

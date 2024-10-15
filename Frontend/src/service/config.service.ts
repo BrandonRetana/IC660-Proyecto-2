@@ -4,7 +4,7 @@ axios.defaults.baseURL = "http://localhost:8080/api";
 interface ConfigData {
   generationMethod: string;
   seed?: string | number;
-  algorithm: string;
+  algorithm: number;
   processes: number;
   operations: number;
 }
