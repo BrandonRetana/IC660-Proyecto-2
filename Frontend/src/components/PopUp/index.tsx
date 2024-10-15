@@ -63,6 +63,7 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
         const response = await sendConfig(configData);
         setInstructions(response);
         console.log("Configuración enviada con éxito:", response);
+        setInstructions(response);
       } catch (error) {
         console.error("Error al enviar la configuración:", error);
       }
