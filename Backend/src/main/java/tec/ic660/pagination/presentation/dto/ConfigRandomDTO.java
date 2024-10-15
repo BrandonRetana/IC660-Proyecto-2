@@ -38,4 +38,12 @@ public class ConfigRandomDTO {
     public void setOperations(Integer operations) {
         this.operations = operations;
     }
+
+    @Override
+    public String toString() {
+        return "ConfigRandomDTO [seed=" + seed + ", algorithm=" + algorithm + ", process=" + process + ", operations="
+                + operations + "]";
+    }
+
+    
 }
