@@ -13,19 +13,24 @@ import tec.ic660.pagination.domain.algorithms.*;
 @Component
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;
-    private final int PAGES_IN_MEMORY = 100;
+    private final int MAX_MEMORY_PAGES = 100;
     private final List<PageEntity> realMemory;
     private final List<PageEntity> virtualMemory;
     private final Map<PTR, List<PageEntity>> memoryMap;
     private PagingAlgorithm pagingAlgorithm;
-    private Integer numberOfMemoryPages;
+    private Integer pagesInMemory;
+    private Integer simulationTime;
+    private Integer TrashingTime;
+
 
     public MMUEntity() {
         this.realMemory = new ArrayList<>(Collections.nCopies(100, null));
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
         this.pagingAlgorithm = new FIFOAlgorithm();
-        this.numberOfMemoryPages = 0;
+        this.pagesInMemory = 0;
+        this.simulationTime = 0;
+        this.TrashingTime = 0;
     }
 
     private int calculatePages(int size) {
@@ -40,21 +45,29 @@ public class MMUEntity {
         int requiredPages = calculatePages(size);
         PTR ptr = new PTR(pid);
         List<PageEntity> pages = new ArrayList<>();
-        for (int i = 0; i < PAGES_IN_MEMORY && requiredPages > 0; i++) {
+        int pageTimeCounter = 0;
+        for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
             if (realMemory.get(i) == null) {
                 PageEntity page = new PageEntity(i, true, pid);
                 realMemory.set(i, page);
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
+                page.setLoadedTime(pageTimeCounter);
                 requiredPages--;
-                numberOfMemoryPages++;
+                pagesInMemory++;
+                simulationTime+=1;
+                pageTimeCounter+=1;
             }
         }
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
                 PageEntity page = new PageEntity(i, true, pid);
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, numberOfMemoryPages);
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
+                page.setLoadedTime(pageTimeCounter);
                 requiredPages--;
+                simulationTime+=5;
+                TrashingTime+=5;
+                pageTimeCounter+=5;
             }
         }
         memoryMap.put(ptr, pages);
@@ -67,9 +80,21 @@ public class MMUEntity {
             System.out.println("Puntero no encontrado.");
             return;
         }
+
+        int pageTimeCounter = 0;
+
         for (PageEntity page : pages) {
-            if (!page.isInRealMemory() ) {
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, numberOfMemoryPages);
+            if (!page.isInRealMemory() ){
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
+                page.setLoadedTime(pageTimeCounter);
+                simulationTime+=5;
+                TrashingTime+=5;
+                pageTimeCounter+=5;
+            }
+            else{
+                page.setLoadedTime(pageTimeCounter);
+                simulationTime+=1; 
+                pageTimeCounter+=1;
             }
             if (pagingAlgorithm instanceof SecondChanceAlgorithm) {
                 page.setReferenceBit(true);

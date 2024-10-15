@@ -36,8 +36,8 @@ public class OptimalAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage, Integer numberOfMemoryPages) {
-        if (numberOfMemoryPages == 100) { // Si la memoria real está llena
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage, Integer pagesInMemory) {
+        if (pagesInMemory == 100) { // Si la memoria real está llena
             PageEntity pageToEvict = findOptimalPageToEvict(realMemory);
             movePageToVirtualMemory(virtualMemory, pageToEvict);
         }

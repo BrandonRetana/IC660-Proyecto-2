@@ -6,6 +6,7 @@ public class PageEntity {
     private boolean isInRealMemory;
     private boolean referenceBit;
     private int ptrId;
+    private int LoadedTime;
     private static int counter = -1;
     
     public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId) {
@@ -14,6 +15,7 @@ public class PageEntity {
         this.isInRealMemory = isInRealMemory;
         this.referenceBit = false;
         this.ptrId = ptrId;
+        this.LoadedTime = 0;
     }
 
     public int getId() {
@@ -54,6 +56,13 @@ public class PageEntity {
 
     public boolean isMarked(){
         return referenceBit;
+    }
+
+    public int getLoadedTime() {
+        return LoadedTime;
+    }   
+    public void setLoadedTime(int LoadedTime) {
+        this.LoadedTime = LoadedTime;
     }
 
 }
