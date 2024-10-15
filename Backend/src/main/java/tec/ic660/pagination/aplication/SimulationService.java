@@ -138,7 +138,7 @@ public class SimulationService {
         return logicalMemoryData;
     }
 
-    public void setSimulationConfig(ConfigRandomDTO configDTO) {
+    public Queue<String> setSimulationConfig(ConfigRandomDTO configDTO) {
 
         Queue<String> randomInstructions = instructionGenerator.generateInstructions(configDTO.getSeed(),
                 configDTO.getProcess(), configDTO.getOperations());
@@ -158,8 +158,7 @@ public class SimulationService {
                 algorithm = new RandomAlgorithm();
                 break;
         }
-
         this.mmu.setPagingAlgorithm(algorithm);
+        return randomInstructions;
     }
-
 }

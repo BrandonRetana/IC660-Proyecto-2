@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import ch.qos.logback.classic.net.SyslogAppender;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpStatus;
@@ -32,15 +30,15 @@ public class SimulationController {
     private Queue<String> stringQueue = new LinkedList<String>();
 
     @PostMapping("/sent/config")
-    public ResponseEntity<String> setConfig(@Validated @RequestBody ConfigRandomDTO config) {
+    public ResponseEntity<List<String>> setConfig(@Validated @RequestBody ConfigRandomDTO config) {
         try {
-            this.service.setSimulationConfig(config);
-            return ResponseEntity.ok("Configuration set successfully");
+            Queue<String> randomInstructions = this.service.setSimulationConfig(config);
+            List<String> instructionList = new LinkedList<>(randomInstructions);
+            return ResponseEntity.ok(instructionList);
         } catch (Exception e) {
-            System.out.println(config);
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to set configuration: " + e.getMessage());
+                    .body(null);
         }
     }
 
