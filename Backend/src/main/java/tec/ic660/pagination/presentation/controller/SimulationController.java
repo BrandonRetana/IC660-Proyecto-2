@@ -35,7 +35,9 @@ public class SimulationController {
     public ResponseEntity<List<String>> setConfig(@Validated @RequestBody ConfigRandomDTO config) {
         try {
             Queue<String> randomInstructions = this.service.setSimulationConfig(config);
-            serviceOPT.setInstructionsQueue(randomInstructions);
+            Queue<String> copiedInstructionsQueue = new LinkedList<>(randomInstructions);
+            serviceOPT.setInstructionsQueue(copiedInstructionsQueue);
+            serviceOPT.setAlgorithm();
             List<String> instructionList = new LinkedList<>(randomInstructions);
             return ResponseEntity.ok(instructionList);
         } catch (Exception e) {
@@ -67,6 +69,7 @@ public class SimulationController {
 
     @GetMapping("/execute/step")
     public ResponseEntity<DualSimulationReportDTO> executeStep() {
+        System.out.println("Me ejecute");
         try {
             // Ejecuta el siguiente paso en el servicio
             this.service.executeNextStep();

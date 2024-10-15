@@ -1,10 +1,8 @@
 package tec.ic660.pagination.aplication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
+import tec.ic660.pagination.domain.algorithms.OptimalAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.algorithms.RandomAlgorithm;
 import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
@@ -21,15 +19,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-@Service
 public class SimulationService {
-    @Autowired
+    
     private MMUEntity mmu;
-
-    @Autowired
+    
     private SchedulerEntity scheduler;
 
-    @Autowired
     private InstructionGenerator instructionGenerator;
 
     private PagingAlgorithm algorithm;
@@ -40,6 +35,9 @@ public class SimulationService {
 
     public SimulationService() {
         this.totalMemory = 0;
+        this.mmu = new MMUEntity();
+        this.scheduler = new SchedulerEntity();
+        this.instructionGenerator = new InstructionGenerator();
     }
     /*------------------------------------- Execute instructions -------------------------------------*/
     
@@ -215,4 +213,11 @@ public class SimulationService {
     public void setInstructionsQueue(Queue<String> instructionsQueue) {
         this.instructionsQueue = instructionsQueue;
     }
+
+    public void setAlgorithm() {
+        algorithm = new OptimalAlgorithm(this.instructionsQueue);
+        this.mmu.setPagingAlgorithm(algorithm);
+    }
+
+
 }

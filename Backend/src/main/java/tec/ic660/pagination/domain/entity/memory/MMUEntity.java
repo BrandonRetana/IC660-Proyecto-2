@@ -75,6 +75,7 @@ public class MMUEntity {
     }
 
     public void useMemory(PTR ptr) {
+        System.out.println(ptr);
         List<PageEntity> pages = memoryMap.get(ptr);
         if (pages == null) {
             System.out.println("Puntero no encontrado.");
