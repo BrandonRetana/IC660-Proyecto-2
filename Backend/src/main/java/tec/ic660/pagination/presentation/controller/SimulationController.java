@@ -61,7 +61,7 @@ public class SimulationController {
         }
     }
 
-    @GetMapping("/get/execute/step")
+    @GetMapping("/execute/step")
     public void execute() {
         this.service.executeNextStep();
     }
