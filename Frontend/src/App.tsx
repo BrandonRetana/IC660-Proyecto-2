@@ -23,17 +23,14 @@ function App() {
           const result = await executeStep();
           setData(result);
           console.warn(data);
+          await execute();
         }
       } catch (error) {
         console.error("Error al ejecutar el paso:", error);
       }
     };
-
-    if (executing) {
-      const interval = setInterval(execute, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [executing]);
+    execute();
+  }, [data, executing]);
 
   return (
     <>
