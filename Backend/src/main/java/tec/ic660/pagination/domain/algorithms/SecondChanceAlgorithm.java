@@ -24,8 +24,8 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer numberOfMemoryPages) {
-        if (numberOfMemoryPages == 100) {     
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer pagesInMemory) {
+        if (pagesInMemory == 100) {     
             while (true) {
                 PageEntity pageToEvict = secondChanceQueue.poll();     
                 if (pageToEvict.getReferenceBit()) { 
