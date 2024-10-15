@@ -4,9 +4,9 @@ public class PageEntity {
     private final int id;
     private int physicalAddres;
     private boolean isInRealMemory;
-    private boolean referenceBit ;
+    private boolean referenceBit;
     private int ptrId;
-    private static int counter = 0;
+    private static int counter = -1;
     
     public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId) {
         this.id = ++counter;
@@ -51,4 +51,5 @@ public class PageEntity {
     public void setPhysicalAddress(int physicalAddres) {
         this.physicalAddres = physicalAddres;
     }
+
 }

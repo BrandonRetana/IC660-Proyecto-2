@@ -2,9 +2,12 @@ package tec.ic660.pagination.presentation.controller;
 
 import tec.ic660.pagination.aplication.SimulationService;
 import tec.ic660.pagination.presentation.dto.InstructionsListDTO;
+import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpStatus;
@@ -12,7 +15,9 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Queue;
 import java.util.LinkedList;
+import java.util.List;
 
+@RestController
 @RequestMapping("/api")
 public class SimulationController {
 
@@ -21,7 +26,12 @@ public class SimulationController {
 
     private Queue<String> stringQueue = new LinkedList<String>();
 
-    @PostMapping("/get/instructions")
+    @PostMapping("/sent/config")
+    public void setConfig(){
+        this.service.setSimulationConfig();
+    }
+
+    @PostMapping("/sent/instructions")
     public ResponseEntity<String> getInstructions(@RequestBody InstructionsListDTO request) {
         try {
             if (request.getInstructions() == null || request.getInstructions().isEmpty()) {
@@ -39,4 +49,27 @@ public class SimulationController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/get/execute/step")
+    public void execute(){
+        this.service.executeNextStep();
+    }
+
+    @GetMapping("/get/data/algorithm")
+    public List<TableRawDTO> getDataSelctedAlgorithm(){
+        List<TableRawDTO> tableData = service.getDataTable(1);
+        return tableData;
+    }
+
+    @GetMapping("/get/data/opt")
+    public List<TableRawDTO> getDataOPT(){
+        List<TableRawDTO> tableData = service.getDataTable(2);
+        return tableData;
+    }
+
+    @GetMapping("/ping")
+    public String getPing(){
+        return "pong";
+    }
+
 }

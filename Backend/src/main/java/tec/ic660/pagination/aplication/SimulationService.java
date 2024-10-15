@@ -3,10 +3,20 @@ package tec.ic660.pagination.aplication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
+import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
+import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
+import tec.ic660.pagination.domain.algorithms.RandomAlgorithm;
 import tec.ic660.pagination.domain.entity.cpu.SchedulerEntity;
 import tec.ic660.pagination.domain.entity.memory.MMUEntity;
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import tec.ic660.pagination.domain.valueObjects.PTR;
+import tec.ic660.pagination.infraestructure.InstructionGenerator;
+import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 @Service
@@ -17,12 +27,17 @@ public class SimulationService {
     @Autowired
     private SchedulerEntity scheduler;
 
+    @Autowired
+    private InstructionGenerator instructionGenerator;
+
+    private PagingAlgorithm fifoAlgorithm = new RandomAlgorithm();
+
     private Queue<String> instructionsQueue;
 
     private void executeNew(String instruction) {
-        String[] parts = instruction.substring(4, instruction.length() - 1).split(", ");
-        int id = Integer.parseInt(parts[0]);
-        int size = Integer.parseInt(parts[1]);
+        String[] parts = instruction.substring(4, instruction.length() - 1).split(",");
+        int id = Integer.parseInt(parts[0].trim());
+        int size = Integer.parseInt(parts[1].trim());
         PTR ptr = this.mmu.newMemory(id, size);
         this.scheduler.addPtr2Process(id, ptr);
     }
@@ -50,19 +65,19 @@ public class SimulationService {
     }
 
     public void executeNextStep() {
-        for (String instruction : instructionsQueue) {
-            if (instruction.startsWith("new")) {
-                this.executeNew(instruction);
-            } else if (instruction.startsWith("use")) {
-                this.executeUse(instruction);
-            } else if (instruction.startsWith("delete")) {
-                this.executeDelete(instruction);
-            } else if (instruction.startsWith("kill")) {
-                this.executeKill(instruction);
-            } else {
-                System.out.println("Unknown instruction: " + instruction);
-            }
+        String instruction = instructionsQueue.poll();
+        if (instruction.startsWith("new")) {
+            this.executeNew(instruction);
+        } else if (instruction.startsWith("use")) {
+            this.executeUse(instruction);
+        } else if (instruction.startsWith("delete")) {
+            this.executeDelete(instruction);
+        } else if (instruction.startsWith("kill")) {
+            this.executeKill(instruction);
+        } else {
+            System.out.println("Unknown instruction: " + instruction);
         }
+
     }
 
     public Queue<String> getInstructionsQueue() {
@@ -71,6 +86,58 @@ public class SimulationService {
 
     public void setInstructionsQueue(Queue<String> instructionsQueue) {
         this.instructionsQueue = instructionsQueue;
+    }
+
+    public List<TableRawDTO> getDataTable(Integer table) {
+        if (table == 1) {
+            return generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+        }
+        return generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+    }
+
+    private List<TableRawDTO> generateJsonTableRawData(List<PageEntity> realMemory, List<PageEntity> virtualMemory) {
+        List<TableRawDTO> logicalMemoryData = new LinkedList<>();
+        List<PageEntity> logicalMemory = new LinkedList<>(realMemory);
+        logicalMemory.addAll(virtualMemory);
+        logicalMemory.sort(Comparator.comparing(PageEntity::getId));
+        TableRawDTO dto;
+
+        for (int i = 0; i < logicalMemory.size(); i++) {
+            PageEntity pageEntity = logicalMemory.get(i);
+            dto = new TableRawDTO();
+            // Set page ID
+            dto.setPageId(pageEntity.getId());
+            // Set PID
+            dto.setPid(this.scheduler.getPTRbyId(pageEntity.getPtrId()).getPid());
+            // Set logical memory position
+            dto.setLAddr(i);
+            // Set memory real or virtual
+            if (pageEntity.isInRealMemory()) {
+                dto.setLoaded("X");
+            }
+            if (pageEntity.isInRealMemory()) {
+                dto.setMAddr(pageEntity.getPhysicalAddres());
+            } else {
+                dto.setDAddr(pageEntity.getPhysicalAddres());
+            }
+            // Set mark
+            dto.setMark("X");
+            // Set time loaded
+            dto.setLoadedT("1s");
+        }
+
+        return logicalMemoryData;
+    }
+
+    public void setSimulationConfig() {
+
+        Queue<String> randomInstructions = instructionGenerator.generateInstructions(10, 50, 500);
+        setInstructionsQueue(randomInstructions);
+        System.out.println(randomInstructions);
+
+        this.mmu.setPagingAlgorithm(this.fifoAlgorithm);
+
+        System.out.println("\n\nSize: \n\n"+randomInstructions.size());
     }
 
 }
