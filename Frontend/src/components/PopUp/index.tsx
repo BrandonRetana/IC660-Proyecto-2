@@ -42,14 +42,14 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
 
   const handleSubmit = async () => {
     const algorithmValue = algorithmMapping[selectedOption] || 0;
-
     const configData = {
       generationMethod: selectedMethod,
       seed: automaticGeneration ? seed : undefined,
       algorithm: algorithmValue,
-      processes: processes ?? 0,
+      process: processes ?? 0,
       operations: operations ?? 0,
     };
+    console.warn(configData);
 
     try {
       const response = await sendConfig(configData);
