@@ -14,6 +14,7 @@ import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 import tec.ic660.pagination.infraestructure.InstructionGenerator;
 import tec.ic660.pagination.presentation.dto.ConfigRandomDTO;
+import tec.ic660.pagination.presentation.dto.SimulationReportDTO;
 import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
 import java.util.LinkedList;
@@ -88,7 +89,6 @@ public class SimulationService {
 
     }
 
-
     /*------------------------------------- Calculate metrics -------------------------------------*/
 
     private Integer getInteralFragmentation(Integer totalMemory, Integer numberOfPages) {
@@ -96,11 +96,12 @@ public class SimulationService {
         
     }
 
-    public List<TableRawDTO> getTableData() {
-        List<TableRawDTO> totalPages = generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
-        Integer fragmentation = getInteralFragmentation(this.totalMemory, totalPages.size());
-
-        return totalPages;
+    private double calculatePercentage(double part, double total) {
+        if (total > 0) {
+            return ((double) part / total) * 100;
+        } else {
+            return 0.0; 
+        }
     }
 
     private List<TableRawDTO> generateJsonTableRawData(List<PageEntity> realMemory, List<PageEntity> virtualMemory) {
@@ -165,6 +166,46 @@ public class SimulationService {
         }
         this.mmu.setPagingAlgorithm(algorithm);
         return randomInstructions;
+    }
+
+    public SimulationReportDTO getSimulationReport() {
+        // Table data
+        List<TableRawDTO> pageTable = generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+    
+        // Process and simulation time
+        Integer simulationDuration = this.mmu.getSimulationTime(); 
+        Integer totalProcesses = this.scheduler.getNumberOfProcess();
+    
+        // Memory information
+        Integer realMemoryUsageInKb = this.mmu.getPagesInMemory() * 4;
+        Double realMemoryUsagePercentage = calculatePercentage(realMemoryUsageInKb, 400);
+        Integer virtualMemoryUsageInKb = this.mmu.getVirtualMemory().size() * 4;
+        Double virtualMemoryUsagePercentage = calculatePercentage(virtualMemoryUsageInKb, realMemoryUsageInKb);
+    
+        // Pages information
+        Integer internalFragmentation = getInteralFragmentation(this.totalMemory, pageTable.size());
+        Integer trashingDuration = this.mmu.getTrashingTime();
+        Double trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
+        Integer pagesLoadedInMemory = this.mmu.getPagesInMemory();
+        Integer pagesInVirtualMemory = this.mmu.getVirtualMemory().size();
+    
+        // Crear el DTO y llenar sus campos
+        SimulationReportDTO report = new SimulationReportDTO();
+        report.setPageTable(pageTable);
+        report.setSimulationDuration(simulationDuration);
+        report.setTotalProcesses(totalProcesses);
+        report.setRealMemoryUsageInKb(realMemoryUsageInKb);
+        report.setRealMemoryUsagePercentage(realMemoryUsagePercentage);
+        report.setVirtualMemoryUsageInKb(virtualMemoryUsageInKb);
+        report.setVirtualMemoryUsagePercentage(virtualMemoryUsagePercentage);
+        report.setInternalFragmentation(internalFragmentation);
+        report.setTrashingDuration(trashingDuration);
+        report.setTrashingPercentage(trashingPercentage);
+        report.setPagesLoadedInMemory(pagesLoadedInMemory);
+        report.setPagesInVirtualMemory(pagesInVirtualMemory);
+    
+        // Devolver el DTO con toda la información
+        return report;
     }
 
     public Queue<String> getInstructionsQueue() {

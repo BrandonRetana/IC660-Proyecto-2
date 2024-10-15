@@ -65,4 +65,8 @@ public class SchedulerEntity {
         System.out.println("Process and all associated PTRs removed successfully");
     }
 
+    public Integer getNumberOfProcess() {
+        return this.processTable.size();
+    }
+
 }

@@ -111,8 +111,8 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 Integer pageIndex = realMemory.indexOf(page);
-                realMemory.remove(page);
                 realMemory.add(pageIndex, null);
+                pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
                 continue;
             }
@@ -126,8 +126,8 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 Integer pageIndex = realMemory.indexOf(page);
-                realMemory.remove(page);
                 realMemory.add(pageIndex, null);
+                pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
                 continue;
             }
@@ -158,6 +158,17 @@ public class MMUEntity {
         this.pagingAlgorithm = algorithm;
     }
 
-    
+    public Integer getTrashingTime() {
+        return TrashingTime;
+    }
+
+    public Integer getSimulationTime() {
+        return simulationTime;
+    }
+
+    public Integer getPagesInMemory() {
+        return pagesInMemory;
+    }
+
 
 }
