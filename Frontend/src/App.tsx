@@ -5,27 +5,35 @@ import PagesThrashing from "./components/PagesThrashing";
 import RAMDetails from "./components/RAMDetails";
 import ProcessesSimTime from "./components/ProcessesSimTime";
 import PopUp from "./components/PopUp";
+import { executeStep } from "./service/config.service";
 
 import { useEffect, useState } from "react";
 import React from "react";
 
 function App() {
   const [showPopUp, setShowPopUp] = useState(true);
+  const [data, setData] = useState(undefined);
+  const [executing, setExecuting] = useState(false);
+  const [controllerView, setControllerView] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const response = await fetch("");
-  //       const data = await response.json();
-  //       console.log(data);
-  //     } catch (error) {
-  //       console.error("Error al obtener los datos:", error);
-  //     }
-  //   };
+  useEffect(() => {
+    const execute = async () => {
+      try {
+        if (executing) {
+          const result = await executeStep();
+          setData(result);
+          console.warn(data);
+        }
+      } catch (error) {
+        console.error("Error al ejecutar el paso:", error);
+      }
+    };
 
-  //   const intervalId = setInterval(fetchData, 1000);
-  //   return () => clearInterval(intervalId);
-  // }, []);
+    if (executing) {
+      const interval = setInterval(execute, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [executing]);
 
   return (
     <>
@@ -33,6 +41,12 @@ function App() {
         <PopUp
           handleClose={() => {
             setShowPopUp(false);
+          }}
+          handleStart={() => {
+            setExecuting(true);
+          }}
+          handleShowController={() => {
+            setControllerView(true);
           }}
         />
       )}
@@ -57,8 +71,20 @@ function App() {
         </div>
       </div>
 
-      <div className="menu" onClick={() => setShowPopUp(!showPopUp)}>
-        <i className="fa-solid fa-sliders"></i>
+      <div className="optionsMenu VStack">
+        {controllerView && (
+          <div className="controller" onClick={() => setExecuting(!executing)}>
+            {executing ? (
+              <i className="fa-solid fa-pause"></i>
+            ) : (
+              <i className="fa-solid fa-play"></i>
+            )}
+          </div>
+        )}
+
+        <div className="menu" onClick={() => setShowPopUp(!showPopUp)}>
+          <i className="fa-solid fa-sliders"></i>
+        </div>
       </div>
     </>
   );

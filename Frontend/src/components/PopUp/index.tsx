@@ -4,23 +4,23 @@ import DragDrop from "./DragDrop";
 import OptionSelector from "../Selector";
 import { sendConfig } from "../../service/config.service";
 
-export default function PopUp({ handleClose }: { handleClose: () => void }) {
-  const [selectedOption, setSelectedOption] = useState<string>("");
-  const [selectedMethod, setSelectedMethod] = useState<string>("Archivo");
+interface PopUpProps {
+  handleClose: () => void;
+  handleStart: () => void;
+  handleShowController: () => void;
+}
+
+function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
+  const [selectedOption, setSelectedOption] = useState("");
+  const [selectedMethod, setSelectedMethod] = useState("Archivo");
   const [seed, setSeed] = useState<string | number>("");
-  const [processes, setProcesses] = useState<number | undefined>(undefined);
-  const [operations, setOperations] = useState<number | undefined>(undefined);
+  const [process, setProcess] = useState<number | undefined>();
+  const [operations, setOperations] = useState<number | undefined>();
   const [validForm, setValidForm] = useState(false);
+  const [instructions, setInstructions] = useState<string | null>(null);
 
   const options = ["FIFO", "SC", "MRU", "RND"];
   const methods = ["Archivo", "Automática"];
-  const [fileGeneration, setFileGeneration] = useState(
-    selectedMethod === "Archivo"
-  );
-  const [automaticGeneration, setAutomaticGeneration] = useState(
-    selectedMethod === "Automática"
-  );
-
   const algorithmMapping: { [key: string]: number } = {
     FIFO: 1,
     SC: 2,
@@ -28,47 +28,50 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
     RND: 4,
   };
 
-  const handleMethodChange = (method: string) => {
-    setSelectedMethod(method);
-    setFileGeneration(method === "Archivo");
-    setAutomaticGeneration(method === "Automática");
-  };
+  const isAutomatic = selectedMethod === "Automática";
+  const isFileMethod = selectedMethod === "Archivo";
 
   useEffect(() => {
-    if (selectedMethod === "Archivo") {
+    if (isFileMethod) {
       setSeed("");
     }
   }, [selectedMethod]);
 
-  const handleSubmit = async () => {
-    const algorithmValue = algorithmMapping[selectedOption] || 0;
-    const configData = {
-      generationMethod: selectedMethod,
-      seed: automaticGeneration ? seed : undefined,
-      algorithm: algorithmValue,
-      process: processes ?? 0,
-      operations: operations ?? 0,
-    };
-    console.warn(configData);
-
-    try {
-      const response = await sendConfig(configData);
-      console.log("Configuración enviada con éxito:", response);
-    } catch (error) {
-      console.error("Error al enviar la configuración:", error);
-    }
-  };
-
   useEffect(() => {
     const isValid =
       selectedOption !== "" &&
-      processes !== undefined &&
-      operations !== undefined &&
-      processes > 0 &&
-      operations > 0 &&
-      (!automaticGeneration || (automaticGeneration && seed !== ""));
-    setValidForm(isValid);
-  }, [selectedOption, processes, operations, seed, automaticGeneration]);
+      (!isAutomatic ||
+        (process &&
+          operations &&
+          process > 0 &&
+          operations > 0 &&
+          seed !== ""));
+    setValidForm(Boolean(isValid));
+  }, [selectedOption, process, operations, seed, isAutomatic]);
+
+  const handleMethodChange = (method: string) => setSelectedMethod(method);
+
+  const handleSubmit = async () => {
+    if (!instructions) {
+      const configData = {
+        seed: isAutomatic ? Number(seed) : undefined,
+        algorithm: algorithmMapping[selectedOption] || 0,
+        process: process || 0,
+        operations: operations || 0,
+      };
+      try {
+        const response = await sendConfig(configData);
+        console.log("Configuración enviada con éxito:", response);
+        setInstructions(response);
+      } catch (error) {
+        console.error("Error al enviar la configuración:", error);
+      }
+    } else {
+      handleClose();
+      handleStart();
+      handleShowController();
+    }
+  };
 
   return (
     <div className="background">
@@ -77,9 +80,9 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
 
         <div className="HStack">
           <div className="popUpLeft VStack">
-            <form action="#">
+            <form>
               <div className="VStack method">
-                <label htmlFor="">Método de generación:</label>
+                <label>Método de generación:</label>
                 <OptionSelector
                   options={methods}
                   selectedOption={selectedMethod}
@@ -88,20 +91,19 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
                 />
               </div>
 
-              {automaticGeneration && (
+              {isAutomatic && (
                 <div className="inputContainer">
-                  <label htmlFor="seed">Semilla:</label>
+                  <label>Semilla:</label>
                   <input
                     name="seed"
                     type="number"
-                    placeholder=""
                     value={seed}
-                    onChange={(e) => setSeed(e.target.value)}
+                    onChange={(e) => setSeed(Number(e.target.value))}
                   />
                 </div>
               )}
 
-              {fileGeneration && (
+              {isFileMethod && (
                 <>
                   <p className="hint">Carga un archivo</p>
                   <div className="dropContainer">
@@ -111,7 +113,7 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
               )}
 
               <div className="inputContainer">
-                <label htmlFor="">Algoritmo:</label>
+                <label>Algoritmo:</label>
                 <OptionSelector
                   options={options}
                   selectedOption={selectedOption}
@@ -120,30 +122,30 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
                 />
               </div>
 
-              <div className="HStack optionsContainer">
-                <div className="inputContainer">
-                  <label htmlFor="processes">Procesos:</label>
-                  <input
-                    name="processes"
-                    type="number"
-                    placeholder=""
-                    value={processes || ""}
-                    onChange={(e) => setProcesses(Number(e.target.value))}
-                  />
+              {isAutomatic && (
+                <div className="HStack optionsContainer">
+                  <div className="inputContainer">
+                    <label>Procesos:</label>
+                    <input
+                      name="process"
+                      type="number"
+                      value={process || ""}
+                      onChange={(e) => setProcess(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className="inputContainer">
+                    <label>Operaciones:</label>
+                    <input
+                      name="operations"
+                      type="number"
+                      value={operations || ""}
+                      onChange={(e) => setOperations(Number(e.target.value))}
+                    />
+                  </div>
                 </div>
-                <div className="inputContainer">
-                  <label htmlFor="operations">Operaciones:</label>
-                  <input
-                    name="operations"
-                    type="number"
-                    placeholder=""
-                    value={operations || ""}
-                    onChange={(e) => setOperations(Number(e.target.value))}
-                  />
-                </div>
-              </div>
+              )}
 
-              {automaticGeneration && (
+              {isAutomatic && (
                 <button className="button download" type="button">
                   Descargar archivo
                 </button>
@@ -154,7 +156,7 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
                 type="button"
                 onClick={validForm ? handleSubmit : undefined}
               >
-                {automaticGeneration ? "Generar" : "Empezar"}
+                {isAutomatic && !instructions ? "Generar" : "Empezar"}
               </button>
             </form>
           </div>
@@ -163,3 +165,5 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
     </div>
   );
 }
+
+export default PopUp;

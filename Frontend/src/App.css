@@ -27,13 +27,10 @@
 }
 
 .menu {
-  position: fixed;
   background-color: #427baf;
   width: 4rem;
   height: 4rem;
   border-radius: 50%;
-  bottom: 0;
-  right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,8 +42,36 @@
   }
 }
 
-.menu:hover {
-  width: 4.5rem;
-  height: 4.5rem;
+.controller {
+  background-color: #4e6b4c;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   transition: 0.5s ease all;
+  i {
+    color: #fff;
+    font-size: 1.5rem;
+  }
+}
+
+.menu:hover {
+  transition: 0.5s ease all;
+  background-color: #2a5680;
+}
+.controller:hover {
+  transition: 0.5s ease all;
+  background-color: #354d33;
+}
+
+.optionsMenu {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin: 0.5rem;
+  gap: 1rem;
+  align-items: center;
 }
