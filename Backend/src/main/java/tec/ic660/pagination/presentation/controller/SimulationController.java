@@ -60,24 +60,24 @@ public class SimulationController {
     }
 
     @GetMapping("/get/execute/step")
-    public void execute(){
+    public void execute() {
         this.service.executeNextStep();
     }
 
     @GetMapping("/get/data/algorithm")
-    public List<TableRawDTO> getDataSelctedAlgorithm(){
+    public List<TableRawDTO> getDataSelctedAlgorithm() {
         List<TableRawDTO> tableData = service.getDataTable(1);
         return tableData;
     }
 
     @GetMapping("/get/data/opt")
-    public List<TableRawDTO> getDataOPT(){
+    public List<TableRawDTO> getDataOPT() {
         List<TableRawDTO> tableData = service.getDataTable(2);
         return tableData;
     }
 
     @GetMapping("/ping")
-    public String getPing(){
+    public String getPing() {
         return "pong";
     }
 
