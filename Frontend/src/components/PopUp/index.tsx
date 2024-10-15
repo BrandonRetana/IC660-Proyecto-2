@@ -2,19 +2,23 @@ import React, { useState, useEffect } from "react";
 import "./styles.scss";
 import DragDrop from "./DragDrop";
 import OptionSelector from "../Selector";
+import { sendConfig } from "../../service/config.service";
 
 export default function PopUp({ handleClose }: { handleClose: () => void }) {
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("Archivo");
+  const [seed, setSeed] = useState<string | number>("");
+  const [processes, setProcesses] = useState<number | undefined>(undefined);
+  const [operations, setOperations] = useState<number | undefined>(undefined);
+  const [validForm, setValidForm] = useState(false);
+
   const options = ["FIFO", "SC", "MRU", "RND"];
   const methods = ["Archivo", "Automática"];
-  const [seed, setSeed] = useState<string | number>("");
-
   const [fileGeneration, setFileGeneration] = useState(
     selectedMethod === "Archivo"
   );
   const [automaticGeneration, setAutomaticGeneration] = useState(
-    selectedMethod === "Automatica"
+    selectedMethod === "Automática"
   );
 
   const handleMethodChange = (method: string) => {
@@ -28,6 +32,34 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
       setSeed("");
     }
   }, [selectedMethod]);
+
+  const handleSubmit = async () => {
+    const configData = {
+      generationMethod: selectedMethod,
+      seed: automaticGeneration ? seed : undefined,
+      algorithm: selectedOption,
+      processes: processes ?? 0,
+      operations: operations ?? 0,
+    };
+
+    try {
+      const response = await sendConfig(configData);
+      console.log("Configuración enviada con éxito:", response);
+    } catch (error) {
+      console.error("Error al enviar la configuración:", error);
+    }
+  };
+
+  useEffect(() => {
+    const isValid =
+      selectedOption !== "" &&
+      processes !== undefined &&
+      operations !== undefined &&
+      processes > 0 &&
+      operations > 0 &&
+      (!automaticGeneration || (automaticGeneration && seed !== ""));
+    setValidForm(isValid);
+  }, [selectedOption, processes, operations, seed, automaticGeneration]);
 
   return (
     <div className="background">
@@ -82,22 +114,37 @@ export default function PopUp({ handleClose }: { handleClose: () => void }) {
               <div className="HStack optionsContainer">
                 <div className="inputContainer">
                   <label htmlFor="processes">Procesos:</label>
-                  <input name="processes" type="number" placeholder="" />
+                  <input
+                    name="processes"
+                    type="number"
+                    placeholder=""
+                    value={processes || ""}
+                    onChange={(e) => setProcesses(Number(e.target.value))}
+                  />
                 </div>
                 <div className="inputContainer">
                   <label htmlFor="operations">Operaciones:</label>
-                  <input name="operations" type="number" placeholder="" />
+                  <input
+                    name="operations"
+                    type="number"
+                    placeholder=""
+                    value={operations || ""}
+                    onChange={(e) => setOperations(Number(e.target.value))}
+                  />
                 </div>
               </div>
 
               {automaticGeneration && (
                 <button className="button download" type="button">
                   Descargar archivo
-                  {/* <i className="fa-solid fa-download"></i> */}
                 </button>
               )}
 
-              <button className="button start" type="button">
+              <button
+                className={`button ${validForm ? "start" : "disable"}`}
+                type="button"
+                onClick={validForm ? handleSubmit : undefined}
+              >
                 {automaticGeneration ? "Generar" : "Empezar"}
               </button>
             </form>
