@@ -71,7 +71,9 @@ public class MMUEntity {
             if (!page.isInRealMemory() ) {
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, numberOfMemoryPages);
             }
-            page.setReferenceBit(true);
+            if (pagingAlgorithm instanceof SecondChanceAlgorithm) {
+                page.setReferenceBit(true);
+            }
             if (pagingAlgorithm instanceof MRUAlgorithm) { 
                 ((MRUAlgorithm) pagingAlgorithm).pushPageToTop(page);
             }

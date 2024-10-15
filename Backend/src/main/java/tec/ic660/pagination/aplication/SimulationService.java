@@ -7,11 +7,13 @@ import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.algorithms.RandomAlgorithm;
+import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.entity.cpu.SchedulerEntity;
 import tec.ic660.pagination.domain.entity.memory.MMUEntity;
 import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 import tec.ic660.pagination.infraestructure.InstructionGenerator;
+import tec.ic660.pagination.presentation.dto.ConfigRandomDTO;
 import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
 import java.util.Comparator;
@@ -30,7 +32,7 @@ public class SimulationService {
     @Autowired
     private InstructionGenerator instructionGenerator;
 
-    private PagingAlgorithm fifoAlgorithm = new RandomAlgorithm();
+    private PagingAlgorithm algorithm;
 
     private Queue<String> instructionsQueue;
 
@@ -99,11 +101,16 @@ public class SimulationService {
         List<TableRawDTO> logicalMemoryData = new LinkedList<>();
         List<PageEntity> logicalMemory = new LinkedList<>(realMemory);
         logicalMemory.addAll(virtualMemory);
-        logicalMemory.sort(Comparator.comparing(PageEntity::getId));
+
         TableRawDTO dto;
+
+        System.out.println(logicalMemoryData.size());
 
         for (int i = 0; i < logicalMemory.size(); i++) {
             PageEntity pageEntity = logicalMemory.get(i);
+            if (pageEntity == null) {
+                continue;
+            }
             dto = new TableRawDTO();
             // Set page ID
             dto.setPageId(pageEntity.getId());
@@ -121,23 +128,39 @@ public class SimulationService {
                 dto.setDAddr(pageEntity.getPhysicalAddres());
             }
             // Set mark
-            dto.setMark("X");
+            dto.setMark("");
+            if (pageEntity.isMarked()) {
+                dto.setMark("X");
+            }
             // Set time loaded
             dto.setLoadedT("1s");
+            logicalMemoryData.add(dto);
         }
-
         return logicalMemoryData;
     }
 
-    public void setSimulationConfig() {
+    public void setSimulationConfig(ConfigRandomDTO configDTO) {
 
-        Queue<String> randomInstructions = instructionGenerator.generateInstructions(10, 50, 500);
+        Queue<String> randomInstructions = instructionGenerator.generateInstructions(configDTO.getSeed(),
+                configDTO.getProcess(), configDTO.getOperations());
         setInstructionsQueue(randomInstructions);
-        System.out.println(randomInstructions);
 
-        this.mmu.setPagingAlgorithm(this.fifoAlgorithm);
+        switch (configDTO.getAlgorithm()) {
+            case 1:
+                algorithm = new FIFOAlgorithm();
+                break;
+            case 2:
+                algorithm = new SecondChanceAlgorithm();
+                break;
+            case 3:
+                algorithm = new MRUAlgorithm();
+                break;
+            case 4:
+                algorithm = new RandomAlgorithm();
+                break;
+        }
 
-        System.out.println("\n\nSize: \n\n"+randomInstructions.size());
+        this.mmu.setPagingAlgorithm(algorithm);
     }
 
 }

@@ -13,6 +13,7 @@ public class InstructionGenerator {
         List<Integer> pids = new ArrayList<>();
         Map<Integer, List<Integer>> ptrs = new HashMap<>(); // Map to track ptrs by process
         Set<Integer> killedProcesses = new HashSet<>();
+        Integer counter = 0;
 
         for (int i = 1; i <= numberOfProcesses; i++) {
             pids.add(i);
@@ -21,8 +22,8 @@ public class InstructionGenerator {
         // Ensure each process has at least two instructions
         for (int pid : pids) {
             // First instruction must always be 'new'
-            int size = (random.nextInt(400) + 1) * 4; // Size in B (multiple of 4KB)
-            int ptr = instructions.size() + 1;
+            int size = random.nextInt(81920 - 4096 + 1) + 4096;            // Size in B (multiple of 4KB)
+            int ptr = ++counter;
             instructions.add("new(" + pid + ", " + size + ")");
             ptrs.computeIfAbsent(pid, k -> new ArrayList<>()).add(ptr);
 
@@ -62,7 +63,7 @@ public class InstructionGenerator {
 
             switch (instruction) {
                 case "new":
-                    int size = (random.nextInt(400) + 1) * 4; // Size in B (multiple of 4KB)
+                    int size = random.nextInt(81920 - 4096 + 1) + 4096;
                     int ptr = instructions.size() + 1;
                     instructions.add("new(" + pid + ", " + size + ")");
                     ptrs.computeIfAbsent(pid, k -> new ArrayList<>()).add(ptr);

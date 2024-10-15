@@ -52,4 +52,8 @@ public class PageEntity {
         this.physicalAddres = physicalAddres;
     }
 
+    public boolean isMarked(){
+        return referenceBit;
+    }
+
 }

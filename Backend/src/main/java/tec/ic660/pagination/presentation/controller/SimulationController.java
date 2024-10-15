@@ -1,6 +1,7 @@
 package tec.ic660.pagination.presentation.controller;
 
 import tec.ic660.pagination.aplication.SimulationService;
+import tec.ic660.pagination.presentation.dto.ConfigRandomDTO;
 import tec.ic660.pagination.presentation.dto.InstructionsListDTO;
 import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Queue;
 import java.util.LinkedList;
@@ -27,8 +29,15 @@ public class SimulationController {
     private Queue<String> stringQueue = new LinkedList<String>();
 
     @PostMapping("/sent/config")
-    public void setConfig(){
-        this.service.setSimulationConfig();
+    public ResponseEntity<String> setConfig(@Validated @RequestBody ConfigRandomDTO config) {
+        try {
+            this.service.setSimulationConfig(config);
+            return ResponseEntity.ok("Configuration set successfully");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to set configuration: " + e.getMessage());
+        }
     }
 
     @PostMapping("/sent/instructions")
