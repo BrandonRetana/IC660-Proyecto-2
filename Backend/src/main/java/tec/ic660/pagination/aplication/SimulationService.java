@@ -35,11 +35,20 @@ public class SimulationService {
 
     private Queue<String> instructionsQueue;
 
+    private Integer totalMemory;
+
+    public SimulationService() {
+        this.totalMemory = 0;
+    }
+    /*------------------------------------- Execute instructions -------------------------------------*/
+    
     private void executeNew(String instruction) {
         String[] parts = instruction.substring(4, instruction.length() - 1).split(",");
         int id = Integer.parseInt(parts[0].trim());
         int size = Integer.parseInt(parts[1].trim());
         PTR ptr = this.mmu.newMemory(id, size);
+        ptr.setInitialMemory(size);
+        this.totalMemory += size;
         this.scheduler.addPtr2Process(id, ptr);
     }
 
@@ -52,6 +61,7 @@ public class SimulationService {
     private void executeDelete(String instruction) {
         int id = Integer.parseInt(instruction.substring(7, instruction.length() - 1));
         PTR ptr = this.scheduler.getPTRbyId(id);
+        this.totalMemory -= ptr.getInitialMemory();
         this.mmu.deleteMemory(ptr);
         this.scheduler.deletePTRInProccess(id);
     }
@@ -60,9 +70,6 @@ public class SimulationService {
         int pid = Integer.parseInt(instruction.substring(5, instruction.length() - 1));
         this.mmu.killProcessMemory(pid);
         this.scheduler.killProcess(pid);
-    }
-
-    public SimulationService() {
     }
 
     public void executeNextStep() {
@@ -81,19 +88,19 @@ public class SimulationService {
 
     }
 
-    public Queue<String> getInstructionsQueue() {
-        return instructionsQueue;
+
+    /*------------------------------------- Calculate metrics -------------------------------------*/
+
+    private Integer getInteralFragmentation(Integer totalMemory, Integer numberOfPages) {
+        return (numberOfPages * 4096) - totalMemory;
+        
     }
 
-    public void setInstructionsQueue(Queue<String> instructionsQueue) {
-        this.instructionsQueue = instructionsQueue;
-    }
+    public List<TableRawDTO> getTableData() {
+        List<TableRawDTO> totalPages = generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+        Integer fragmentation = getInteralFragmentation(this.totalMemory, totalPages.size());
 
-    public List<TableRawDTO> getDataTable(Integer table) {
-        if (table == 1) {
-            return generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
-        }
-        return generateJsonTableRawData(this.mmu.getRealMemory(), this.mmu.getVirtualMemory());
+        return totalPages;
     }
 
     private List<TableRawDTO> generateJsonTableRawData(List<PageEntity> realMemory, List<PageEntity> virtualMemory) {
@@ -102,8 +109,6 @@ public class SimulationService {
         logicalMemory.addAll(virtualMemory);
 
         TableRawDTO dto;
-
-        System.out.println(logicalMemoryData.size());
 
         for (int i = 0; i < logicalMemory.size(); i++) {
             PageEntity pageEntity = logicalMemory.get(i);
@@ -160,5 +165,13 @@ public class SimulationService {
         }
         this.mmu.setPagingAlgorithm(algorithm);
         return randomInstructions;
+    }
+
+    public Queue<String> getInstructionsQueue() {
+        return instructionsQueue;
+    }
+
+    public void setInstructionsQueue(Queue<String> instructionsQueue) {
+        this.instructionsQueue = instructionsQueue;
     }
 }

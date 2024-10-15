@@ -68,13 +68,7 @@ public class SimulationController {
 
     @GetMapping("/get/data/algorithm")
     public List<TableRawDTO> getDataSelctedAlgorithm() {
-        List<TableRawDTO> tableData = service.getDataTable(1);
-        return tableData;
-    }
-
-    @GetMapping("/get/data/opt")
-    public List<TableRawDTO> getDataOPT() {
-        List<TableRawDTO> tableData = service.getDataTable(2);
+        List<TableRawDTO> tableData = service.getTableData();
         return tableData;
     }
 
