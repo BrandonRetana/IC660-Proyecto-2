@@ -28,6 +28,11 @@ public class PTR {
         this.pid = pid;
     }
 
+    @Override
+    public String toString() {
+        return "PTR [id=" + id + ", pid=" + pid + ", initialMemory=" + initialMemory + "]";
+    }
+
     public int getInitialMemory() {
         return initialMemory;
     }

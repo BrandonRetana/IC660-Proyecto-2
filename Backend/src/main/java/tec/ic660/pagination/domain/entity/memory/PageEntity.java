@@ -82,4 +82,13 @@ public class PageEntity {
         this.timeStamp = timeStamp;
     }
 
+    @Override
+    public String toString() {
+        return "PageEntity [id=" + id + ", physicalAddres=" + physicalAddres + ", isInRealMemory=" + isInRealMemory
+                + ", referenceBit=" + referenceBit + ", ptrId=" + ptrId + ", LoadedTime=" + LoadedTime + ", timeStamp="
+                + timeStamp + "]";
+    }
+
+    
+
 }
