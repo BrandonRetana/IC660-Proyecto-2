@@ -18,6 +18,7 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
   const [operations, setOperations] = useState<number | undefined>();
   const [validForm, setValidForm] = useState(false);
   const [instructions, setInstructions] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string | null>(null);
 
   const options = ["FIFO", "SC", "MRU", "RND"];
   const methods = ["Archivo", "Automática"];
@@ -27,7 +28,6 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
     MRU: 3,
     RND: 4,
   };
-
   const isAutomatic = selectedMethod === "Automática";
   const isFileMethod = selectedMethod === "Archivo";
 
@@ -40,14 +40,14 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
   useEffect(() => {
     const isValid =
       selectedOption !== "" &&
-      (!isAutomatic ||
+      ((!isAutomatic && fileContent !== null) ||
         (process &&
           operations &&
           process > 0 &&
           operations > 0 &&
           seed !== ""));
     setValidForm(Boolean(isValid));
-  }, [selectedOption, process, operations, seed, isAutomatic]);
+  }, [selectedOption, process, operations, seed, isAutomatic, fileContent]);
 
   const handleMethodChange = (method: string) => setSelectedMethod(method);
 
@@ -61,9 +61,12 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
       };
       try {
         const response = await sendConfig(configData);
-        setInstructions(response);
-        console.log("Configuración enviada con éxito:", response);
-        setInstructions(response);
+
+        // Convierte el array de instrucciones en una cadena con saltos de línea
+        const formattedInstructions = response.join("\n");
+
+        setInstructions(formattedInstructions);
+        console.warn("Configuración enviada con éxito:", formattedInstructions);
       } catch (error) {
         console.error("Error al enviar la configuración:", error);
       }
@@ -71,6 +74,20 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
       handleClose();
       handleStart();
       handleShowController();
+    }
+  };
+
+  const handleDownload = () => {
+    if (instructions) {
+      const blob = new Blob([instructions], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "instrucciones.txt";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     }
   };
 
@@ -108,7 +125,7 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
                 <>
                   <p className="hint">Carga un archivo</p>
                   <div className="dropContainer">
-                    <DragDrop />
+                    <DragDrop onFileCharge={setFileContent} />
                   </div>
                 </>
               )}
@@ -147,7 +164,12 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
               )}
 
               {isAutomatic && (
-                <button className="button download" type="button">
+                <button
+                  className={`button ${instructions ? "download" : "disable"}`}
+                  type="button"
+                  onClick={handleDownload}
+                  disabled={!instructions}
+                >
                   Descargar archivo
                 </button>
               )}

@@ -1,19 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import "./styles.scss";
 
-// Cambiar el tipo de archivo a CSV
-const fileTypes = ["CSV"];
+// Cambiar el tipo de archivo a TXT
+const fileTypes = ["TXT"];
 
-function DragDrop() {
-  const [file, setFile] = useState<File | undefined>(undefined);
+interface dragDropProps {
+  onFileCharge: (value: string) => void;
+}
+
+function DragDrop({ onFileCharge }: dragDropProps) {
+  const [fileContent, setFileContent] = useState<string>("");
   const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    onFileCharge(fileContent);
+  }, [fileContent]);
 
   const handleChange = (file: File) => {
     const fileExtension = file.name.split(".").pop()?.toLowerCase();
-    if (fileExtension === "csv") {
-      setFile(file);
+    if (fileExtension === "txt") {
       setError("");
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setFileContent((event.target?.result as string) || "");
+      };
+      reader.onerror = () => {
+        setError("Hubo un error al leer el archivo");
+      };
+
+      reader.readAsText(file);
+    } else {
+      setError("El archivo debe ser un .txt");
     }
   };
 
@@ -27,6 +46,7 @@ function DragDrop() {
         label="Sube un archivo con instrucciones"
         onTypeError=""
       />
+      {error && <p className="error">{error}</p>}
     </div>
   );
 }
