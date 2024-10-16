@@ -1,8 +1,9 @@
 package tec.ic660.pagination.domain.algorithms;
 
-import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import java.util.List;
 import java.util.Random;
+
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
 
 public class RandomAlgorithm extends PagingAlgorithm {
 
@@ -23,15 +24,11 @@ public class RandomAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer pagesInMemory ) {
-        if (pagesInMemory == 100) {
-            PageEntity pageToEvict = realMemory.get(random.nextInt(realMemory.size()));
-            int freeFrame = pageToEvict.getPhysicalAddres();
-            movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);   
-            realMemory.set(freeFrame, page);  
-            page.setPhysicalAddres(freeFrame);
-        }else{
-            movePageToRealMemory(realMemory, virtualMemory ,page);
-        }
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
+        PageEntity pageToEvict = realMemory.get(random.nextInt(realMemory.size()));
+        int freeFrame = pageToEvict.getPhysicalAddres();
+        movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);   
+        realMemory.set(freeFrame, page);  
+        page.setPhysicalAddres(freeFrame);
     }
 }

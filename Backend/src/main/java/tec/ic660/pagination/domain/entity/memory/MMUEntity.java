@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
@@ -71,7 +70,13 @@ public class MMUEntity {
             for (int i = 0; i < requiredPages; i++) {
                 usedSpace = Math.min(remainingSize, PAGE_SIZE);
                 PageEntity page = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
+                if (pagesInMemory == MAX_MEMORY_PAGES) {
+                    pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
+                }else{
+                    pagingAlgorithm.movePageToRealMemory(realMemory, virtualMemory, page);
+                    pagesInMemory++;
+                    pagingAlgorithm.addPageToAlgorithmStructure(page);      
+                }
                 pages.add(page);
                 page.setLoadedTime(pageTimeCounter);
                 remainingSize -= usedSpace;
@@ -86,18 +91,26 @@ public class MMUEntity {
     }
     
 
+  
+
+
     public void useMemory(PTR ptr) {
         List<PageEntity> pages = memoryMap.get(ptr);
         if (pages == null) {
             System.out.println("Puntero no encontrado.");
             return;
         }
-
         int pageTimeCounter = 0;
 
         for (PageEntity page : pages) {
             if (!page.isInRealMemory() ){
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
+                if (pagesInMemory == MAX_MEMORY_PAGES) {
+                    pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
+                }else{
+                    pagingAlgorithm.movePageToRealMemory(realMemory, virtualMemory, page);
+                    pagesInMemory++;
+                    pagingAlgorithm.addPageToAlgorithmStructure(page);      
+                }
                 page.setLoadedTime(pageTimeCounter);
                 page.setTimeStarted(simulationTime);    
                 simulationTime+=5;
@@ -116,7 +129,6 @@ public class MMUEntity {
                 ((MRUAlgorithm) pagingAlgorithm).pushPageToTop(page);
             }
         }
-
     }
 
     public void deleteMemory(PTR ptr) {

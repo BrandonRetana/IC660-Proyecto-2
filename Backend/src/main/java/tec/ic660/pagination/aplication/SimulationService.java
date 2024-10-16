@@ -1,8 +1,11 @@
 package tec.ic660.pagination.aplication;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
-import tec.ic660.pagination.domain.algorithms.OptimalAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.algorithms.RandomAlgorithm;
 import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
@@ -14,10 +17,6 @@ import tec.ic660.pagination.infraestructure.InstructionGenerator;
 import tec.ic660.pagination.presentation.dto.ConfigRandomDTO;
 import tec.ic660.pagination.presentation.dto.SimulationReportDTO;
 import tec.ic660.pagination.presentation.dto.TableRawDTO;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
 public class SimulationService {
 
@@ -52,7 +51,7 @@ public class SimulationService {
         this.totalMemory += size;
         this.scheduler.addPtr2Process(id, ptr);
         this.counterPtr++;
-        System.out.println(counterPtr);
+        //System.out.println(counterPtr);
     }
 
     private void executeUse(String instruction) {

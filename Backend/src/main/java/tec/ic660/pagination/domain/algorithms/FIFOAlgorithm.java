@@ -1,9 +1,10 @@
 package tec.ic660.pagination.domain.algorithms;
 
-import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
 
 public class FIFOAlgorithm extends PagingAlgorithm {
 
@@ -22,16 +23,11 @@ public class FIFOAlgorithm extends PagingAlgorithm {
         fifoQueue.remove(page);
     }
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer pagesInMemory) {
-        if (pagesInMemory == 100) {
-            PageEntity pageToEvict = fifoQueue.poll();
-            int freeFrame = pageToEvict.getPhysicalAddres();
-            movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
-            realMemory.set(freeFrame, page);
-            page.setPhysicalAddres(freeFrame);
-        }else{
-            movePageToRealMemory(realMemory, virtualMemory, page);
-        }
-        fifoQueue.add(page);
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
+        PageEntity pageToEvict = fifoQueue.poll();
+        int freeFrame = pageToEvict.getPhysicalAddres();
+        movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
+        realMemory.add(freeFrame, page);
+        page.setPhysicalAddres(freeFrame);
     }
 }

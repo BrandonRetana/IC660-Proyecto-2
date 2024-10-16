@@ -1,9 +1,10 @@
 package tec.ic660.pagination.domain.algorithms;
 
-import tec.ic660.pagination.domain.entity.memory.PageEntity;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
 
 public class SecondChanceAlgorithm extends PagingAlgorithm {
 
@@ -24,8 +25,7 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page, Integer pagesInMemory) {
-        if (pagesInMemory == 100) {     
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {   
             while (true) {
                 PageEntity pageToEvict = secondChanceQueue.poll();     
                 if (pageToEvict.getReferenceBit()) { 
@@ -38,10 +38,6 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
                     movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
                     break; 
                 }
-            }
-        }else{
-            movePageToRealMemory(realMemory, virtualMemory, page);
-        }
-        secondChanceQueue.add(page);      
+            }    
     }
 }

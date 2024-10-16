@@ -1,8 +1,12 @@
 package tec.ic660.pagination.domain.algorithms;
 
-import tec.ic660.pagination.domain.entity.memory.PageEntity;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 
-import java.util.*;
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
 
 public class OptimalAlgorithm extends PagingAlgorithm {
 
@@ -38,13 +42,9 @@ public class OptimalAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage,
-            Integer pagesInMemory) {
-        if (pagesInMemory == 100) { // Si la memoria real está llena
-            PageEntity pageToEvict = findOptimalPageToEvict(realMemory);
-            movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
-        }
-        movePageToRealMemory(realMemory, virtualMemory, newPage);
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
+        PageEntity pageToEvict = findOptimalPageToEvict(realMemory);
+        movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
     }
 
     private PageEntity findOptimalPageToEvict(List<PageEntity> realMemory) {
