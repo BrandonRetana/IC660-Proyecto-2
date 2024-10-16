@@ -1,7 +1,19 @@
 import React from "react";
 import "./styles.scss";
 
-export default function RAMDetails() {
+interface RamDetailsProps {
+  realMemoryUsageInKb: number | undefined;
+  realMemoryUsagePercentage: number | undefined;
+  virtualMemoryUsageInKb: number | undefined;
+  virtualMemoryUsagePercentage: number | undefined;
+}
+
+export default function RAMDetails({
+  realMemoryUsageInKb,
+  realMemoryUsagePercentage,
+  virtualMemoryUsageInKb,
+  virtualMemoryUsagePercentage,
+}: RamDetailsProps) {
   return (
     <table className="RamDetails-table tableView border">
       <thead>
@@ -14,10 +26,12 @@ export default function RAMDetails() {
       </thead>
       <tbody>
         <tr>
-          <td>244</td>
-          <td>61</td>
-          <td>40</td>
-          <td>4%</td>
+          <td>{realMemoryUsageInKb && realMemoryUsageInKb}</td>
+          <td>{realMemoryUsagePercentage && realMemoryUsagePercentage}</td>
+          <td>{virtualMemoryUsageInKb && virtualMemoryUsageInKb}</td>
+          <td>
+            {virtualMemoryUsagePercentage && virtualMemoryUsagePercentage}
+          </td>
         </tr>
       </tbody>
     </table>

@@ -1,15 +1,36 @@
 import React from "react";
 import useStyle from "../../hooks/useStyles";
 import "./styles.scss";
-import { ramDummy } from "./ramDummy";
+
+interface PageTableEntry {
+  pageId: number;
+  pid: number;
+  loaded: string;
+  laddr: number;
+  maddr: number;
+  daddr: number;
+  loadedT: string;
+  mark: string;
+}
 
 interface Props {
   title: string;
+  data?: {
+    pageTable: PageTableEntry[];
+  };
 }
 
-export default function RamState({ title }: Props) {
+export default function RamState({ title, data }: Props) {
   const styles = useStyle();
   const cells = Array.from({ length: 100 }, (_, i) => i + 1);
+
+  const ramData = data?.pageTable.reduce((acc, { pid, pageId }) => {
+    if (!acc[pid]) {
+      acc[pid] = { pages: [] };
+    }
+    acc[pid].pages.push(pageId);
+    return acc;
+  }, {} as Record<number, { pages: number[] }>);
 
   return (
     <div className="table-container">
@@ -24,12 +45,14 @@ export default function RamState({ title }: Props) {
         <tbody>
           <tr>
             {cells.map((cell) => {
-              const cellStyle = Object.keys(ramDummy).reduce((style, id) => {
-                const numericId = parseInt(id);
-                return ramDummy[numericId].pages.includes(cell)
-                  ? styles[numericId as keyof typeof styles]
-                  : style;
-              }, {} as React.CSSProperties);
+              const cellStyle = ramData
+                ? Object.keys(ramData).reduce((style, id) => {
+                    const numericId = parseInt(id, 10);
+                    return ramData[numericId].pages.includes(cell)
+                      ? styles[numericId as keyof typeof styles]
+                      : style;
+                  }, {} as React.CSSProperties)
+                : {};
 
               return (
                 <td
