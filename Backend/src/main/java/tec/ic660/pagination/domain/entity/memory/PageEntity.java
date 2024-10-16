@@ -65,4 +65,14 @@ public class PageEntity {
         this.LoadedTime = LoadedTime;
     }
 
+    public static int getCounter() {
+        return counter;
+    }
+
+    public static void setCounter(int counter) {
+        PageEntity.counter = counter;
+    }
+
+    
+
 }

@@ -1,6 +1,9 @@
 package tec.ic660.pagination.presentation.controller;
 
 import tec.ic660.pagination.aplication.SimulationService;
+import tec.ic660.pagination.domain.entity.memory.PageEntity;
+import tec.ic660.pagination.domain.valueObjects.PTR;
+import tec.ic660.pagination.infraestructure.SaveGlobalStaticCounters;
 import tec.ic660.pagination.presentation.dto.ConfigRandomDTO;
 import tec.ic660.pagination.presentation.dto.DualSimulationReportDTO;
 import tec.ic660.pagination.presentation.dto.InstructionsListDTO;
@@ -70,9 +73,12 @@ public class SimulationController {
     @GetMapping("/execute/step")
     public ResponseEntity<DualSimulationReportDTO> executeStep() {
         System.out.println("Me ejecute");
+        SaveGlobalStaticCounters counters;
         try {
-            // Ejecuta el siguiente paso en el servicio
+            counters = new SaveGlobalStaticCounters(PTR.getCounter(), PageEntity.getCounter());
             this.service.executeNextStep();
+            PageEntity.setCounter(counters.getPageCounter());
+            PTR.setCounter(counters.getPTRCounter());
             this.serviceOPT.executeNextStep();
 
             // Generar los dos informes de simulación

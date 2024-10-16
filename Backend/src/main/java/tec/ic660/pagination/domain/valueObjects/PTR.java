@@ -36,5 +36,15 @@ public class PTR {
         this.initialMemory = initialMemory;
     }
 
+    public static int getCounter() {
+        return counter;
+    }
+
+    public static void setCounter(int counter) {
+        PTR.counter = counter;
+    }
+
+    
+
     
 }
