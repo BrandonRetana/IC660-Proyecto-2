@@ -23,20 +23,22 @@ function App() {
   useEffect(() => {
     const execute = async () => {
       try {
-        if (executing) {
-          const result = await executeStep();
-          setData(result);
-          console.warn(data);
-          await execute();
+        while (executing) { // Ejecutar mientras `executing` sea verdadero
+          const result = await executeStep(); // Esperar la respuesta del backend
+          setData(result); // Actualizar el estado con la respuesta del backend
+          console.warn(result); // Mostrar en consola el resultado
         }
       } catch (error) {
         console.error("Error al ejecutar el paso:", error);
+        setExecuting(false); // Detener la ejecución si ocurre un error
       }
     };
+  
     if (executing) {
-      execute();
+      execute(); // Iniciar el ciclo si `executing` es verdadero
     }
-  }, [data, executing]);
+  
+  }, [executing]); // Ejecutar solo cuando cambie el estado de `executing`
 
   setTimeout(() => {
     setData(dataDummy);

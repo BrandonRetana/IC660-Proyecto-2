@@ -92,4 +92,13 @@ public class PageEntity {
     }
 
 
+    @Override
+    public String toString() {
+        return "PageEntity [id=" + id + ", physicalAddres=" + physicalAddres + ", isInRealMemory=" + isInRealMemory
+                + ", referenceBit=" + referenceBit + ", ptrId=" + ptrId + ", LoadedTime=" + LoadedTime + ", timeStamp="
+                + timeStamp + "]";
+    }
+
+    
+
 }

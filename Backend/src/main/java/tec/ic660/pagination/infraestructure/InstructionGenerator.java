@@ -2,109 +2,83 @@ package tec.ic660.pagination.infraestructure;
 
 import java.util.*;
 
-import org.springframework.stereotype.Component;
-
-@Component
 public class InstructionGenerator {
 
-    public Queue<String> generateInstructions(int seed, int numberOfProcesses, int numberOfOperations) {
-        Random random = new Random(seed);
+    public static Queue<String> generateInstructions(Integer seed, Integer numberOfProcess,
+            Integer numberOfInstructions) {
         LinkedList<String> instructions = new LinkedList<>();
-        List<Integer> pids = new ArrayList<>();
-        Map<Integer, List<Integer>> ptrs = new HashMap<>(); // Map to track ptrs by process
-        Set<Integer> killedProcesses = new HashSet<>();
-        Integer counter = 0;
+        List<Integer> ptrIds = new LinkedList<>();
+        Integer actualPtrId = 0;
+        Random random = new Random(seed);
+        Map<Integer, List<Integer>> processMap = new Hashtable<>();
 
-        for (int i = 1; i <= numberOfProcesses; i++) {
-            pids.add(i);
-        }
-
-        // Ensure each process has at least two instructions
-        for (int pid : pids) {
-            // First instruction must always be 'new'
-            int size = random.nextInt(81920 - 4096 + 1) + 4096;            // Size in B (multiple of 4KB)
-            int ptr = ++counter;
-            instructions.add("new(" + pid + ", " + size + ")");
-            ptrs.computeIfAbsent(pid, k -> new ArrayList<>()).add(ptr);
-
-            // Second instruction must be 'use' of the newly created ptr
-            instructions.add("use(" + ptr + ")");
-        }
-
-        int remainingOperations = numberOfOperations - instructions.size();
-
-        while (remainingOperations > 0) {
-            int pid = pids.get(random.nextInt(pids.size()));
-            List<String> possibleInstructions = new ArrayList<>(Arrays.asList("new", "use", "delete", "kill"));
-
-            if (killedProcesses.contains(pid)) {
-                continue; // Skip processes that have already been killed
-            }
-            if (ptrs.isEmpty() || ptrs.values().stream().allMatch(List::isEmpty)) {
-                possibleInstructions.remove("use");
-                possibleInstructions.remove("delete");
-            }
-
-            // Ensure 'new' cannot be executed after a 'kill'
-            if (instructions.size() > 0 && instructions.getLast().startsWith("kill(")) {
-                possibleInstructions.remove("new");
-            }
-
-            if (possibleInstructions.isEmpty()) {
-                continue; // Skip if no valid instructions are available
-            }
-
-            // Assign lower probability to 'kill' instruction
-            if (possibleInstructions.contains("kill") && random.nextDouble() > 0.1) { // 10% chance to pick 'kill'
-                possibleInstructions.remove("kill");
-            }
-
-            String instruction = possibleInstructions.get(random.nextInt(possibleInstructions.size()));
-
-            switch (instruction) {
-                case "new":
-                    int size = random.nextInt(81920 - 4096 + 1) + 4096;
-                    int ptr = instructions.size() + 1;
-                    instructions.add("new(" + pid + ", " + size + ")");
-                    ptrs.computeIfAbsent(pid, k -> new ArrayList<>()).add(ptr);
-                    break;
-                case "use":
-                    List<Integer> availablePtrs = new ArrayList<>();
-                    ptrs.values().forEach(availablePtrs::addAll);
-                    if (!availablePtrs.isEmpty()) {
-                        int ptrUse = availablePtrs.get(random.nextInt(availablePtrs.size()));
-                        instructions.add("use(" + ptrUse + ")");
+        for (int pid = 1; pid <= numberOfProcess; pid++) {
+            List<String> processInstructions = new ArrayList<>();
+            int numInstructions = numberOfInstructions / numberOfProcess;
+            processMap.put(pid, new LinkedList<Integer>());
+            for (int i = 0; i < numInstructions; i++) {
+                String instruction = getRandomInstruction(random);
+                String lastElement = "";
+                if (instructions.size() > 0) {
+                lastElement = instructions.get(instructions.size() - 1);                    
+                }
+                if (instruction.equals("new")) {
+                    if (lastElement.startsWith("kill")) {
+                        numInstructions--;
+                        continue;
                     }
-                    break;
-                case "delete":
-                    availablePtrs = new ArrayList<>();
-                    ptrs.values().forEach(availablePtrs::addAll);
-                    if (!availablePtrs.isEmpty()) {
-                        int ptrDelete = availablePtrs.get(random.nextInt(availablePtrs.size()));
-                        instructions.add("delete(" + ptrDelete + ")");
-                        ptrs.values().forEach(list -> list.remove((Integer) ptrDelete));
-                        ptrs.entrySet().removeIf(entry -> entry.getValue().isEmpty());
+                }
+                if (instruction.startsWith("use") || instruction.startsWith("delete")) {
+                    if (ptrIds.size() == 0) {
+                        numInstructions--;
+                        continue;
                     }
-                    break;
-                case "kill":
-                    instructions.add("kill(" + pid + ")");
-                    ptrs.remove(pid);
-                    killedProcesses.add(pid);
-                    break;
+                }
+                switch (instruction) {
+                    case "new":
+                        int size = random.nextInt(81920) + 1;
+                        processInstructions.add(String.format("new(%d, %d)", pid, size));
+                        actualPtrId++;
+                        ptrIds.add(actualPtrId);
+                        List<Integer> actualList = processMap.get(pid);
+                        actualList.add(actualPtrId);
+                        processMap.put(pid, actualList);
+                        break;
+                    case "use":
+                        int ptrUse = random.nextInt(ptrIds.size());
+                        Integer ptrdId2use = ptrIds.get(ptrUse);
+                        processInstructions.add(String.format("use(%d)", ptrdId2use));
+                        break;
+                    case "delete":
+                        int ptrIdex2delete = random.nextInt(ptrIds.size());
+                        Integer ptrdId2Delete = ptrIds.get(ptrIdex2delete);
+                        processInstructions.add(String.format("delete(%d)", ptrdId2Delete));
+                        ptrIds.remove(ptrdId2Delete);
+                        break;
+                    case "kill":
+                        processInstructions.add(String.format("kill(%d)", pid));
+                        List<Integer> list2delete = processMap.get(pid);
+                        ptrIds.removeAll(list2delete);
+                        break;
+                }
             }
-
-            remainingOperations--;
+            instructions.addAll(processInstructions);
         }
+        Queue<String> instructionsQueue = instructions;
+        return instructionsQueue;
+    }
 
-        // Ensure the last instruction for each process is 'kill'
-        for (int pid : pids) {
-            if (!killedProcesses.contains(pid)) {
-                instructions.add("kill(" + pid + ")");
-                killedProcesses.add(pid);
-            }
-        }
-
-        return instructions;
+    private static String getRandomInstruction(Random random) {
+        // Crear una lista donde las instrucciones con más probabilidad aparezcan más veces
+        String[] weightedInstructions = {
+            "new", "new", "new","new", "new", "new", "new", "new", "new","new", "new", "new", 
+            "use", "use", "use","use", "use", "use", "use", "use", "use","use", "use", "use", 
+            "delete", "delete", "delete", "delete",  
+            "kill"               
+        };
+    
+        // Elegir una instrucción al azar de la lista ponderada
+        return weightedInstructions[random.nextInt(weightedInstructions.length)];
     }
 
 }

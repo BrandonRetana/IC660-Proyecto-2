@@ -72,7 +72,6 @@ public class SimulationController {
 
     @GetMapping("/execute/step")
     public ResponseEntity<DualSimulationReportDTO> executeStep() {
-        System.out.println("Me ejecute");
         SaveGlobalStaticCounters counters;
         try {
             counters = new SaveGlobalStaticCounters(PTR.getCounter(), PageEntity.getCounter());
