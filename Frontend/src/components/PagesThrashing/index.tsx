@@ -1,7 +1,21 @@
 import React from "react";
 import "./styles.scss";
 
-export default function PagesThrashing() {
+interface PagesThrashingProps {
+  internalFragmentation: number | undefined;
+  trashingDuration: number | undefined;
+  trashingPercentage: number | undefined;
+  pagesLoadedInMemory: number | undefined;
+  pagesInVirtualMemory: number | undefined;
+}
+
+export default function PagesThrashing({
+  internalFragmentation,
+  trashingDuration,
+  trashingPercentage,
+  pagesLoadedInMemory,
+  pagesInVirtualMemory,
+}: PagesThrashingProps) {
   return (
     <table className="pagesThrasing-table tableView border">
       <thead>
@@ -19,11 +33,15 @@ export default function PagesThrashing() {
       </thead>
       <tbody>
         <tr>
-          <td>61</td>
-          <td>85</td>
-          <td className="thrashing">150s</td>
-          <td className="thrashing">60%</td>
-          <td>256KB</td>
+          <td>{pagesLoadedInMemory && pagesLoadedInMemory}</td>
+          <td>{pagesInVirtualMemory && pagesInVirtualMemory}</td>
+          <td className="thrashing">
+            {trashingDuration && trashingDuration + "s"}
+          </td>
+          <td className="thrashing">
+            {trashingPercentage && trashingPercentage + "%"}
+          </td>
+          <td>{internalFragmentation && internalFragmentation + "KB"}</td>
         </tr>
       </tbody>
     </table>

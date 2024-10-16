@@ -1,7 +1,15 @@
 import React from "react";
 import "./styles.scss";
 
-export default function ProcessesSimTime() {
+interface processesSimTimeProps {
+  simulationDuration: number | undefined;
+  totalProcesses: number | undefined;
+}
+
+export default function ProcessesSimTime({
+  simulationDuration,
+  totalProcesses,
+}: processesSimTimeProps) {
   return (
     <table className="SimTime-table tableView border">
       <thead>
@@ -12,8 +20,8 @@ export default function ProcessesSimTime() {
       </thead>
       <tbody>
         <tr>
-          <td>5</td>
-          <td>250s</td>
+          <td>{simulationDuration && simulationDuration}</td>
+          <td>{totalProcesses && totalProcesses + "s"}</td>
         </tr>
       </tbody>
     </table>
