@@ -8,14 +8,16 @@ public class PageEntity {
     private int ptrId;
     private int LoadedTime;
     private static int counter = -1;
+    private int timeStamp;
     
-    public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId) {
+    public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId, int TimeStamp) {
         this.id = ++counter;
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
         this.referenceBit = false;
         this.ptrId = ptrId;
         this.LoadedTime = 0;
+        this.timeStamp = TimeStamp;
     }
 
     public int getId() {
@@ -73,6 +75,11 @@ public class PageEntity {
         PageEntity.counter = counter;
     }
 
-    
+    public int getTimeStarted() {
+        return timeStamp;
+    }
+    public void setTimeStarted(int timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 
 }
