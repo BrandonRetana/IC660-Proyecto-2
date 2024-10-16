@@ -51,33 +51,41 @@ public class MMUEntity {
         PTR ptr = new PTR(pid);
         List<PageEntity> pages = new ArrayList<>();
         int pageTimeCounter = 0;
+        int remainingSize = size; 
+        int usedSpace;
+    
         for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
             if (realMemory.get(i) == null) {
-                PageEntity page = new PageEntity(i, true, pid, simulationTime);
+                usedSpace = Math.min(remainingSize, PAGE_SIZE);
+                PageEntity page = new PageEntity(i, true, pid, simulationTime, usedSpace);
                 realMemory.set(i, page);
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
                 page.setLoadedTime(pageTimeCounter);
+                remainingSize -= usedSpace;  
                 requiredPages--;
                 pagesInMemory++;
-                simulationTime+=1;
-                pageTimeCounter+=1;
+                simulationTime += 1;
+                pageTimeCounter += 1;
             }
         }
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
-                PageEntity page = new PageEntity(i, true, pid, simulationTime);
+                usedSpace = Math.min(remainingSize, PAGE_SIZE);
+                PageEntity page = new PageEntity(i, true, pid, simulationTime, usedSpace);
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
                 page.setLoadedTime(pageTimeCounter);
-                requiredPages--;
-                simulationTime+=5;
-                TrashingTime+=5;
-                pageTimeCounter+=5;
+                remainingSize -= usedSpace;
+                simulationTime += 5;
+                TrashingTime += 5;
+                pageTimeCounter += 5;
             }
         }
+        
         memoryMap.put(ptr, pages);
         return ptr;
     }
+    
 
     public void useMemory(PTR ptr) {
         System.out.println(ptr);
@@ -153,6 +161,20 @@ public class MMUEntity {
         }
     }
 
+    public int getMemoryFragmentation() {
+        int totalFragmentation = 0;
+        for (PageEntity page : realMemory) {
+            if (page != null) {
+                int usedSpace = page.getUsedSpace();
+                int fragmentationInPage = PAGE_SIZE - usedSpace;
+                if (fragmentationInPage > 0) {
+                    totalFragmentation += fragmentationInPage;
+                }
+            }
+        }
+        return totalFragmentation / 1024;
+    }
+    
     public List<PageEntity> getRealMemory() {
         return realMemory;
     }
