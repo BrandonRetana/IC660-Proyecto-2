@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
@@ -15,7 +14,6 @@ import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
-@Component
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;
     private final int MAX_MEMORY_PAGES = 100;
@@ -57,7 +55,7 @@ public class MMUEntity {
         for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
             if (realMemory.get(i) == null) {
                 usedSpace = Math.min(remainingSize, PAGE_SIZE);
-                PageEntity page = new PageEntity(i, true, pid, simulationTime, usedSpace);
+                PageEntity page = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
                 realMemory.set(i, page);
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
@@ -72,8 +70,9 @@ public class MMUEntity {
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
                 usedSpace = Math.min(remainingSize, PAGE_SIZE);
-                PageEntity page = new PageEntity(i, true, pid, simulationTime, usedSpace);
+                PageEntity page = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
+                pages.add(page);
                 page.setLoadedTime(pageTimeCounter);
                 remainingSize -= usedSpace;
                 simulationTime += 5;
@@ -88,7 +87,7 @@ public class MMUEntity {
     
 
     public void useMemory(PTR ptr) {
-        System.out.println(ptr);
+        System.out.println("Esto es use memory"+ptr);
         List<PageEntity> pages = memoryMap.get(ptr);
         if (pages == null) {
             System.out.println("Puntero no encontrado.");
@@ -131,8 +130,8 @@ public class MMUEntity {
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
             }
             else{
-            System.out.println("Hola :)");
-            System.out.println(this.virtualMemory.remove(page));
+
+            this.virtualMemory.remove(page);
             }
         }
         memoryMap.remove(ptr);
@@ -148,7 +147,7 @@ public class MMUEntity {
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
             }
             else{
-            System.out.println(this.virtualMemory.remove(page));
+            this.virtualMemory.remove(page);
             }
         }
     }

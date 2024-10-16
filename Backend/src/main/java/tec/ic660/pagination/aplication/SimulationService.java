@@ -19,8 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import ch.qos.logback.classic.net.SyslogAppender;
-
 public class SimulationService {
 
     private MMUEntity mmu;
@@ -34,6 +32,8 @@ public class SimulationService {
     private Queue<String> instructionsQueue;
 
     private Integer totalMemory;
+
+    private int counterPtr = 0;
 
     public SimulationService() {
         this.totalMemory = 0;
@@ -51,12 +51,18 @@ public class SimulationService {
         ptr.setInitialMemory(size);
         this.totalMemory += size;
         this.scheduler.addPtr2Process(id, ptr);
+        this.counterPtr++;
+        System.out.println(counterPtr);
     }
 
     private void executeUse(String instruction) {
         int id = Integer.parseInt(instruction.substring(4, instruction.length() - 1));
         PTR ptr = this.scheduler.getPTRbyId(id);
+        try {
         this.mmu.useMemory(ptr);
+    } catch (Exception e) {
+        System.out.println("instructions: "+instruction+"id "+id+"ptr "+ptr);
+    }
     }
 
     private void executeDelete(String instruction) {

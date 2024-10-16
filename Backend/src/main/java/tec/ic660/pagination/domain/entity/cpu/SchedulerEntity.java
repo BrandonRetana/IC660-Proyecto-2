@@ -1,14 +1,12 @@
 package tec.ic660.pagination.domain.entity.cpu;
 
 import java.util.List;
-import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Hashtable;
 import java.util.ArrayList;
 
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
-@Component
 public class SchedulerEntity {
     private final Map<Integer, List<PTR>> processTable;
     private final Map<Integer, PTR> allPTRs;
@@ -18,8 +16,7 @@ public class SchedulerEntity {
         this.allPTRs = new Hashtable<>();
     }
 
-    public void addPtr2Process(int id, PTR ptr) {
-        Integer pid = id;
+    public void addPtr2Process(int pid, PTR ptr) {
         this.allPTRs.put(ptr.getId(), ptr);
         if (this.processTable.containsKey(pid)) {
             List<PTR> ptrList = this.processTable.get(pid);
@@ -35,8 +32,8 @@ public class SchedulerEntity {
         return this.allPTRs.get(id);
     }
 
-    public void deletePTRInProccess(Integer id) {
-        PTR ptr2delete = this.getPTRbyId(id);
+    public void deletePTRInProccess(Integer ptrId) {
+        PTR ptr2delete = this.getPTRbyId(ptrId);
 
         if (ptr2delete == null) {
             System.out.println("PTR not found");
@@ -49,7 +46,7 @@ public class SchedulerEntity {
         if (ptrList != null) {
             ptrList.remove(ptr2delete);
         }
-        this.allPTRs.remove(id);
+        this.allPTRs.remove(ptrId);
     }
 
     public void killProcess(Integer pid) {
