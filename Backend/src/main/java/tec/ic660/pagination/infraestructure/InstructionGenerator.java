@@ -4,7 +4,7 @@ import java.util.*;
 
 public class InstructionGenerator {
 
-    public static Queue<String> generateInstructions(Integer seed, Integer numberOfProcess,
+    public Queue<String> generateInstructions(Integer seed, Integer numberOfProcess,
             Integer numberOfInstructions) {
         LinkedList<String> instructions = new LinkedList<>();
         List<Integer> ptrIds = new LinkedList<>();

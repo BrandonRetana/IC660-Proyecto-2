@@ -133,7 +133,10 @@ public class SimulationService {
                 dto.setPageId(pageEntity.getId());
                 
                 // Set PID
-                dto.setPid(this.scheduler.getPTRbyId(pageEntity.getPtrId()).getPid());
+                Integer ptrId = pageEntity.getPtrId();
+                PTR ptr = this.scheduler.getPTRbyId(ptrId);
+                Integer pid = ptr.getPid();
+                dto.setPid(pid);
                 
                 // Set logical memory position
                 dto.setLAddr(i);

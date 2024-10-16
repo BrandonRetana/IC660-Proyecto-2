@@ -33,11 +33,11 @@ public class MRUAlgorithm extends PagingAlgorithm {
         if (pagesInMemory == 100) {
             PageEntity pageToEvict = mruStack.pop();
             int freeFrame = pageToEvict.getPhysicalAddres();
-            movePageToVirtualMemory(virtualMemory, pageToEvict); 
+            movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict); 
             realMemory.set(freeFrame, page);
             page.setPhysicalAddres(freeFrame);
         }else{
-            movePageToRealMemory(realMemory, page);
+            movePageToRealMemory(realMemory, virtualMemory, page);
         }
         mruStack.push(page); 
     }

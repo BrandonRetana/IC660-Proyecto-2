@@ -27,11 +27,11 @@ public class RandomAlgorithm extends PagingAlgorithm {
         if (pagesInMemory == 100) {
             PageEntity pageToEvict = realMemory.get(random.nextInt(realMemory.size()));
             int freeFrame = pageToEvict.getPhysicalAddres();
-            movePageToVirtualMemory(virtualMemory, pageToEvict);   
+            movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);   
             realMemory.set(freeFrame, page);  
             page.setPhysicalAddres(freeFrame);
         }else{
-            movePageToRealMemory(realMemory, page);
+            movePageToRealMemory(realMemory, virtualMemory ,page);
         }
     }
 }

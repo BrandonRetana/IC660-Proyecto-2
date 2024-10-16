@@ -35,12 +35,12 @@ public class SecondChanceAlgorithm extends PagingAlgorithm {
                     int freeFrame = pageToEvict.getPhysicalAddres();
                     realMemory.set(freeFrame, pageToEvict);
                     page.setPhysicalAddres(freeFrame);
-                    movePageToVirtualMemory(virtualMemory, pageToEvict);
+                    movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
                     break; 
                 }
             }
         }else{
-            movePageToRealMemory(realMemory, page);
+            movePageToRealMemory(realMemory, virtualMemory, page);
         }
         secondChanceQueue.add(page);      
     }

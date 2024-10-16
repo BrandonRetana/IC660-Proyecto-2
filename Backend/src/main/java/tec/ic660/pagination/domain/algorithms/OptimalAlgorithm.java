@@ -12,6 +12,7 @@ public class OptimalAlgorithm extends PagingAlgorithm {
         this.futurePageUsage = new HashMap<>();
         preprocessInstructions(instructionsQueue);
     }
+
     @Override
     public void addPageToAlgorithmStructure(PageEntity page) {
     }
@@ -19,6 +20,7 @@ public class OptimalAlgorithm extends PagingAlgorithm {
     @Override
     public void removePageFromAlgorithmStructure(PageEntity page) {
     }
+
     private void preprocessInstructions(Queue<String> instructionsQueue) {
         int instructionIndex = 0;
 
@@ -36,12 +38,13 @@ public class OptimalAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage, Integer pagesInMemory) {
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage,
+            Integer pagesInMemory) {
         if (pagesInMemory == 100) { // Si la memoria real está llena
             PageEntity pageToEvict = findOptimalPageToEvict(realMemory);
-            movePageToVirtualMemory(virtualMemory, pageToEvict);
+            movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
         }
-        movePageToRealMemory(realMemory, newPage);
+        movePageToRealMemory(realMemory, virtualMemory, newPage);
     }
 
     private PageEntity findOptimalPageToEvict(List<PageEntity> realMemory) {
@@ -50,12 +53,14 @@ public class OptimalAlgorithm extends PagingAlgorithm {
 
         // Iteramos sobre todas las páginas de la memoria real
         for (PageEntity page : realMemory) {
-            if (page == null) continue;
+            if (page == null)
+                continue;
 
             // Buscamos cuándo se volverá a usar el puntero (ptr) asociado a la página
             List<Integer> futureUses = futurePageUsage.getOrDefault(page.getPtrId(), new ArrayList<>());
 
-            // Si la página no se va a usar más en el futuro, la seleccionamos para reemplazo
+            // Si la página no se va a usar más en el futuro, la seleccionamos para
+            // reemplazo
             if (futureUses.isEmpty()) {
                 return page;
             } else {

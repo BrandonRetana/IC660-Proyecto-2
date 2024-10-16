@@ -87,7 +87,6 @@ public class MMUEntity {
     
 
     public void useMemory(PTR ptr) {
-        System.out.println("Esto es use memory"+ptr);
         List<PageEntity> pages = memoryMap.get(ptr);
         if (pages == null) {
             System.out.println("Puntero no encontrado.");
@@ -125,12 +124,12 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 Integer pageIndex = realMemory.indexOf(page);
+                realMemory.remove(page);
                 this.realMemory.add(pageIndex, null);
                 pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
             }
             else{
-
             this.virtualMemory.remove(page);
             }
         }
@@ -142,6 +141,7 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 Integer pageIndex = realMemory.indexOf(page);
+                realMemory.remove(page);
                 this.realMemory.add(pageIndex, null);
                 pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
