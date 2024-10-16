@@ -4,20 +4,23 @@ public class PageEntity {
     private final int id;
     private int physicalAddres;
     private boolean isInRealMemory;
+    private int timeStamp;
     private boolean referenceBit;
     private int ptrId;
+    private int usedSpace;
     private int LoadedTime;
     private static int counter = -1;
-    private int timeStamp;
     
-    public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId, int TimeStamp) {
+    public PageEntity(int physicalAddres, boolean isInRealMemory, int ptrId, int TimeStamp, int usedSpace) {
         this.id = ++counter;
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
+        this.timeStamp = TimeStamp;
         this.referenceBit = false;
         this.ptrId = ptrId;
+        this.usedSpace = usedSpace;
         this.LoadedTime = 0;
-        this.timeStamp = TimeStamp;
+     
     }
 
     public int getId() {
@@ -81,6 +84,13 @@ public class PageEntity {
     public void setTimeStarted(int timeStamp) {
         this.timeStamp = timeStamp;
     }
+    public int getUsedSpace() {
+        return usedSpace;
+    }
+    public void setUsedSpace(int usedSpace) {
+        this.usedSpace = usedSpace;
+    }
+
 
     @Override
     public String toString() {
