@@ -6,9 +6,14 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.springframework.stereotype.Component;
+
+import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
+import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
+import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
+import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.PTR;
-import tec.ic660.pagination.domain.algorithms.*;
 
 @Component
 public class MMUEntity {
@@ -48,7 +53,7 @@ public class MMUEntity {
         int pageTimeCounter = 0;
         for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
             if (realMemory.get(i) == null) {
-                PageEntity page = new PageEntity(i, true, pid);
+                PageEntity page = new PageEntity(i, true, pid, simulationTime);
                 realMemory.set(i, page);
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
                 pages.add(page);
@@ -61,7 +66,7 @@ public class MMUEntity {
         }
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
-                PageEntity page = new PageEntity(i, true, pid);
+                PageEntity page = new PageEntity(i, true, pid, simulationTime);
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
                 page.setLoadedTime(pageTimeCounter);
                 requiredPages--;
@@ -88,6 +93,7 @@ public class MMUEntity {
             if (!page.isInRealMemory() ){
                 pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page, pagesInMemory);
                 page.setLoadedTime(pageTimeCounter);
+                page.setTimeStarted(simulationTime);    
                 simulationTime+=5;
                 TrashingTime+=5;
                 pageTimeCounter+=5;
