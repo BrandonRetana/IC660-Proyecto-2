@@ -23,7 +23,7 @@ public class LimitedList<E> extends ArrayList<E> {
         }
 
         if (super.contains(element) && element != null) {
-            System.out.println("Me cago en se duplico la juagada");
+            System.out.println("Se duplico la juagada");
             System.exit(1);
         }
         return super.set(index, element);

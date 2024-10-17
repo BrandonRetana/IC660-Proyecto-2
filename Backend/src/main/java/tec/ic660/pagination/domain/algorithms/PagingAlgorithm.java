@@ -16,7 +16,6 @@ public abstract class PagingAlgorithm {
             if (realMemory.get(i) == null) {
                 page.setInRealMemory(true);
                 page.setPhysicalAddres(i);
-                System.out.println("Yo fui, move to RealMemory");
                 realMemory.set(i, page);
                 addPageToAlgorithmStructure(page);
                 return;
@@ -27,7 +26,6 @@ public abstract class PagingAlgorithm {
 
 
     public void movePageToVirtualMemory(List<PageEntity> virtualMemory, List<PageEntity> realMemory, PageEntity page) {
-        System.out.println("Yo fui, move to Virtual");
         realMemory.set(page.getPhysicalAddres(), null);
         removePageFromAlgorithmStructure(page);
         page.setInRealMemory(false);

@@ -7,9 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
-import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
-import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.LimitedList;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
@@ -57,7 +55,6 @@ public class MMUEntity {
                 PageEntity nerwPageEntity = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
                 nerwPageEntity.setLoadedTime(pageTimeCounter);
                 pages.add(nerwPageEntity);
-                System.out.println("Yo fui, move to nuevas paginas y memoria vacia new");
                 realMemory.set(i, nerwPageEntity);
                 pagingAlgorithm.addPageToAlgorithmStructure(nerwPageEntity);
                 // Metrics
@@ -109,7 +106,6 @@ public class MMUEntity {
                         pageEntity.setPhysicalAddres(i);
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
-                        System.out.println("Yo fui, Faild y memorua suficiente use " + pagesInMemory);
                         realMemory.set(i, pageEntity);
                         this.simulationTime += 5;
                         pageTimeCounter += 5;
@@ -118,7 +114,6 @@ public class MMUEntity {
                     }
                 }
             }
-
             // Faild y memoria llena
            else if (!pageEntity.isInRealMemory()) {
                 this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);
