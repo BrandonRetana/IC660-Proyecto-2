@@ -67,8 +67,6 @@ function PopUp({
       };
       try {
         const response = await sendConfig(configData);
-
-        // Convierte el array de instrucciones en una cadena con saltos de línea
         const formattedInstructions = response.join("\n");
 
         setInstructions(formattedInstructions);
@@ -79,7 +77,7 @@ function PopUp({
       handleClose();
       handleStart();
       handleShowController();
-      handleSetProcess(process || 0);
+      handleSetProcess(operations || 0);
     }
   };
 
