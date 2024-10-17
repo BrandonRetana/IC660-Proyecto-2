@@ -69,14 +69,11 @@ public class MMUEntity {
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
                 usedSpace = Math.min(remainingSize, PAGE_SIZE);
-                PageEntity page = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
-                if (pagesInMemory == MAX_MEMORY_PAGES) {
-                    pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
-                }else{
-                    pagingAlgorithm.movePageToRealMemory(realMemory, virtualMemory, page);
-                    pagesInMemory++;
-                    pagingAlgorithm.addPageToAlgorithmStructure(page);      
-                }
+                PageEntity page = new PageEntity(-1000, true, ptr.getId(), simulationTime, usedSpace);
+                
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
+                pagingAlgorithm.addPageToAlgorithmStructure(page);
+           
                 pages.add(page);
                 page.setLoadedTime(pageTimeCounter);
                 remainingSize -= usedSpace;
@@ -105,7 +102,7 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (!page.isInRealMemory() ){
                 if (pagesInMemory == MAX_MEMORY_PAGES) {
-                    pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
+                    pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page); 
                 }else{
                     pagingAlgorithm.movePageToRealMemory(realMemory, virtualMemory, page);
                     pagesInMemory++;

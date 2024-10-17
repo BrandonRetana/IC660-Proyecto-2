@@ -24,10 +24,12 @@ public class FIFOAlgorithm extends PagingAlgorithm {
     }
     @Override
     public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
+        System.out.println(fifoQueue.size()+ "fifoQueue size");
         PageEntity pageToEvict = fifoQueue.poll();
         int freeFrame = pageToEvict.getPhysicalAddres();
         movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
         realMemory.add(freeFrame, page);
         page.setPhysicalAddres(freeFrame);
+        page.setInRealMemory(true);
     }
 }
