@@ -57,6 +57,7 @@ public class MMUEntity {
                 PageEntity nerwPageEntity = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
                 nerwPageEntity.setLoadedTime(pageTimeCounter);
                 pages.add(nerwPageEntity);
+                System.out.println("Yo fui, move to nuevas paginas y memoria vacia new");
                 realMemory.set(i, nerwPageEntity);
                 pagingAlgorithm.addPageToAlgorithmStructure(nerwPageEntity);
                 // Metrics
@@ -97,8 +98,8 @@ public class MMUEntity {
                 pageEntity.setTimeStamp(this.simulationTime);
                 this.simulationTime += 1;
                 pageTimeCounter += 1;
-                System.out.println("Hit");
             }
+
             // Faild y memorua suficiente
             if (!pageEntity.isInRealMemory() && pagesInMemory < this.MAX_MEMORY_PAGES) {
                 for (int i = 0; i < this.MAX_MEMORY_PAGES; i++) {
@@ -108,16 +109,18 @@ public class MMUEntity {
                         pageEntity.setPhysicalAddres(i);
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
+                        System.out.println("Yo fui, Faild y memorua suficiente use " + pagesInMemory);
                         realMemory.set(i, pageEntity);
                         this.simulationTime += 5;
                         pageTimeCounter += 5;
-                        System.out.println("Faild y memorua suficiente");
+                        pagesInMemory++;
+                        break;
                     }
                 }
             }
 
             // Faild y memoria llena
-            if (!pageEntity.isInRealMemory() && pagesInMemory == this.MAX_MEMORY_PAGES) {
+           else if (!pageEntity.isInRealMemory()) {
                 this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);
                 pageEntity.setLoadedTime(pageTimeCounter);
                 pageEntity.setTimeStamp(this.simulationTime);
@@ -133,6 +136,7 @@ public class MMUEntity {
         List<PageEntity> pages = memoryMap.get(ptr);
         for (PageEntity pageEntity: pages) {
             if (pageEntity.isInRealMemory()) {
+                System.out.println("Yo fui, deleteMemory");
                 realMemory.set(pageEntity.getPhysicalAddres(), null);
                 this.pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(pageEntity);
