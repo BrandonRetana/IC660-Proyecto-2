@@ -5,7 +5,7 @@ public class PageEntity {
     private int physicalAddres;
     private boolean isInRealMemory;
     private int timeStamp;
-    private boolean referenceBit;
+    private Integer referenceBit;
     private int ptrId;
     private int usedSpace;
     private int LoadedTime;
@@ -16,7 +16,7 @@ public class PageEntity {
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
         this.timeStamp = TimeStamp;
-        this.referenceBit = false;
+        this.referenceBit = -1;
         this.ptrId = ptrId;
         this.usedSpace = usedSpace;
         this.LoadedTime = 0;
@@ -43,22 +43,25 @@ public class PageEntity {
     }
 
     public boolean getReferenceBit() {
-        return referenceBit;
+        if (referenceBit == 1) {
+            return true;
+        }
+        return false;
     }
 
     public void setReferenceBit(boolean referenceBit) {
-        this.referenceBit = referenceBit;
+        if (referenceBit) {
+            this.referenceBit = 1;
+            return;
+        }
+        this.referenceBit = 0;
+
     }
     public int getPtrId() {
         return ptrId;
     }
     public void setPtrId(int ptrId) {
         this.ptrId = ptrId;
-    }
-
-
-    public boolean isMarked(){
-        return referenceBit;
     }
 
     public int getLoadedTime() {
@@ -89,16 +92,6 @@ public class PageEntity {
         this.usedSpace = usedSpace;
     }
 
-    
-
-    @Override
-    public String toString() {
-        return "PageEntity [id=" + id + ", physicalAddres=" + physicalAddres + ", isInRealMemory=" + isInRealMemory
-                + ", referenceBit=" + referenceBit + ", ptrId=" + ptrId + ", LoadedTime=" + LoadedTime + ", timeStamp="
-                + timeStamp + "]";
-    }
-
-
     public int getTimeStamp() {
         return timeStamp;
     }
@@ -108,7 +101,20 @@ public class PageEntity {
         this.timeStamp = timeStamp;
     }
 
+    public String getMark(){
+        if (referenceBit == -1) {
+            return String.valueOf(this.timeStamp);
+        }
+        return String.valueOf(this.referenceBit);
+    }
+
     
-    
+
+    @Override
+    public String toString() {
+        return "PageEntity [id=" + id + ", physicalAddres=" + physicalAddres + ", isInRealMemory=" + isInRealMemory
+                + ", referenceBit=" + referenceBit + ", ptrId=" + ptrId + ", LoadedTime=" + LoadedTime + ", timeStamp="
+                + timeStamp + "]";
+    }
 
 }

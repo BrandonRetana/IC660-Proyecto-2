@@ -2,6 +2,9 @@ package tec.ic660.pagination.domain.entity.cpu;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+
 import java.util.Hashtable;
 import java.util.ArrayList;
 
@@ -52,6 +55,7 @@ public class SchedulerEntity {
     public void killProcess(Integer pid) {
         if (!this.processTable.containsKey(pid)) {
             System.out.println("Process not found");
+            System.exit(1);
             return;
         }
         List<PTR> ptrList = this.processTable.get(pid);
@@ -62,7 +66,9 @@ public class SchedulerEntity {
     }
 
     public Integer getNumberOfProcess() {
-        return this.processTable.size();
+        Set<Integer> process = this.processTable.keySet();
+        //System.out.println("Process size" + process);
+        return process.size();
     }
 
 }

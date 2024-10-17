@@ -24,25 +24,27 @@ public class InstructionGenerator {
                 }
                 if (instruction.equals("new")) {
                     if (lastElement.startsWith("kill")) {
-                        numInstructions--;
+                        i--;
                         continue;
                     }
                 }
                 if (instruction.startsWith("use") || instruction.startsWith("delete")) {
                     if (ptrIds.size() == 0) {
-                        numInstructions--;
+                        i--;
                         continue;
                     }
                 }
+                List<Integer> processes = new ArrayList<>(processMap.keySet());
+                Integer randomPID = processes.get(random.nextInt(processes.size()));
                 switch (instruction) {
                     case "new":
                         int size = random.nextInt(81920) + 1;
-                        processInstructions.add(String.format("new(%d, %d)", pid, size));
+                        processInstructions.add(String.format("new(%d, %d)", randomPID, size));
                         actualPtrId++;
                         ptrIds.add(actualPtrId);
-                        List<Integer> actualList = processMap.get(pid);
+                        List<Integer> actualList = processMap.get(randomPID);
                         actualList.add(actualPtrId);
-                        processMap.put(pid, actualList);
+                        processMap.put(randomPID, actualList);
                         break;
                     case "use":
                         int ptrUse = random.nextInt(ptrIds.size());
@@ -56,9 +58,10 @@ public class InstructionGenerator {
                         ptrIds.remove(ptrdId2Delete);
                         break;
                     case "kill":
-                        processInstructions.add(String.format("kill(%d)", pid));
-                        List<Integer> list2delete = processMap.get(pid);
+                        processInstructions.add(String.format("kill(%d)", randomPID));
+                        List<Integer> list2delete = processMap.get(randomPID);
                         ptrIds.removeAll(list2delete);
+                        processes.remove(randomPID);
                         break;
                 }
             }
@@ -69,16 +72,19 @@ public class InstructionGenerator {
     }
 
     private static String getRandomInstruction(Random random) {
-        // Crear una lista donde las instrucciones con más probabilidad aparezcan más veces
-        String[] weightedInstructions = {
-            "new", "new", "new","new", "new", "new", "new", "new", "new","new", "new", "new", 
-            "use", "use", "use","use", "use", "use", "use", "use", "use","use", "use", "use", 
-            "delete", "delete", "delete", "delete",  
-            "kill"               
-        };
+        // Generar un número aleatorio entre 0 y 100
+        int randomValue = random.nextInt(100) + 1; // Entre 1 y 100
     
-        // Elegir una instrucción al azar de la lista ponderada
-        return weightedInstructions[random.nextInt(weightedInstructions.length)];
+        // Asignar rangos a cada instrucción según sus porcentajes
+        if (randomValue <= 30) {
+            return "new";  // 30% probabilidad
+        } else if (randomValue <= 70) {
+            return "use";  // 40% 
+        } else if (randomValue <= 90) {
+            return "delete";  // 20% 
+        } else {
+            return "kill";  // 10% 
+        }
     }
 
 }

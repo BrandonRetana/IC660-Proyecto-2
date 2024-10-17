@@ -30,10 +30,7 @@ public class SimulationService {
 
     private Queue<String> instructionsQueue;
 
-    private Integer totalMemory;
-
     public SimulationService() {
-        this.totalMemory = 0;
         this.mmu = new MMUEntity();
         this.scheduler = new SchedulerEntity();
         this.instructionGenerator = new InstructionGenerator();
@@ -58,7 +55,6 @@ public class SimulationService {
     private void executeDelete(String instruction) {
         int id = Integer.parseInt(instruction.substring(7, instruction.length() - 1));
         PTR ptr = this.scheduler.getPTRbyId(id);
-        this.totalMemory -= ptr.getInitialMemory();
         this.mmu.deleteMemory(ptr);
         this.scheduler.deletePTRInProccess(id);
     }
@@ -71,6 +67,7 @@ public class SimulationService {
 
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
+        System.out.println(instruction);
         if(instruction == null){
             System.out.println("Ya no hay mas we");
             System.exit(1);
@@ -91,16 +88,11 @@ public class SimulationService {
 
     /*------------------------------------- Calculate metrics -------------------------------------*/
 
-    private Integer getInteralFragmentation(Integer totalMemory, Integer numberOfPages) {
-        return (numberOfPages * 4096) - totalMemory;
-
-    }
-
-    private double calculatePercentage(double part, double total) {
+    private Integer calculatePercentage(Integer part, Integer total) {
         if (total > 0) {
-            return ((double) part / total) * 100;
+            return ( part / total) * 100;
         } else {
-            return 0.0;
+            return 0;
         }
     }
 
@@ -143,10 +135,10 @@ public class SimulationService {
                 }
                 
                 // Set mark
-                dto.setMark(pageEntity.isMarked() ? "X" : "");
+                dto.setMark(pageEntity.getMark());
                 
                 // Set time loaded
-                dto.setLoadedT("1s");  // Esto parece ser un valor fijo
+                dto.setLoadedT(String.valueOf(pageEntity.getLoadedTime())+"s");  // Esto parece ser un valor fijo
                 
                 // Agregar a la lista
                 logicalMemoryData.add(dto);
@@ -198,14 +190,14 @@ public class SimulationService {
 
         // Memory information
         Integer realMemoryUsageInKb = this.mmu.getRealMemory().getNumberOfPages() * 4;
-        Double realMemoryUsagePercentage = calculatePercentage(realMemoryUsageInKb, 400);
+        Integer realMemoryUsagePercentage = calculatePercentage(realMemoryUsageInKb, 400);
         Integer virtualMemoryUsageInKb = this.mmu.getVirtualMemory().size() * 4;
-        Double virtualMemoryUsagePercentage = calculatePercentage(virtualMemoryUsageInKb, realMemoryUsageInKb);
+        Integer virtualMemoryUsagePercentage = calculatePercentage(virtualMemoryUsageInKb, realMemoryUsageInKb);
 
         // Pages information
-        Integer internalFragmentation = getInteralFragmentation(this.totalMemory, pageTable.size());
+        Integer internalFragmentation = this.mmu.getMemoryFragmentation();
         Integer trashingDuration = this.mmu.getTrashingTime();
-        Double trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
+        Integer trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
         Integer pagesLoadedInMemory = this.mmu.getRealMemory().getNumberOfPages();
         Integer pagesInVirtualMemory = this.mmu.getVirtualMemory().size();
 
