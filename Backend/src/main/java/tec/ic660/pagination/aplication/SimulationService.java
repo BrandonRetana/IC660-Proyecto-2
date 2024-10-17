@@ -71,6 +71,10 @@ public class SimulationService {
 
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
+        if(instruction == null){
+            System.out.println("Ya no hay mas we");
+            System.exit(1);
+        }
         if (instruction.startsWith("new")) {
             this.executeNew(instruction);
         } else if (instruction.startsWith("use")) {
@@ -133,7 +137,7 @@ public class SimulationService {
                 // Set memory real or virtual
                 if (pageEntity.isInRealMemory()) {
                     dto.setLoaded("X");
-                    dto.setMAddr(pageEntity.getPhysicalAddres());
+                    dto.setMAddr(pageEntity.getPhysicalAddres()+1);
                 } else {
                     dto.setDAddr(pageEntity.getPhysicalAddres());
                 }
