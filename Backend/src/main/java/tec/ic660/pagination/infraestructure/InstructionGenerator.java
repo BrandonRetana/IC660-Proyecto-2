@@ -106,7 +106,7 @@ public class InstructionGenerator {
             return "new";  // 40% probabilidad
         } else if (randomValue <=  75) {
             return "use";  // 40% 
-        } else if (randomValue <= 92) {
+        } else if (randomValue <= 98) {
             return "delete";  // 10% 
         } else {
             return "kill";  // 10% 
