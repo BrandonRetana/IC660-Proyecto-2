@@ -21,6 +21,11 @@ public class LimitedList<E> extends ArrayList<E> {
         if (index >= maxSize) {
             throw new IndexOutOfBoundsException("Index exceeds max size: " + maxSize);
         }
+
+        if (super.contains(element) && element != null) {
+            System.out.println("Se duplico la juagada");
+            System.exit(1);
+        }
         return super.set(index, element);
     }
 
