@@ -55,7 +55,7 @@ function App() {
           console.error("Error al ejecutar el paso:", error);
           setExecuting(false);
         }
-      }, 100);
+      }, 50);
     }
 
     return () => clearInterval(interval);
