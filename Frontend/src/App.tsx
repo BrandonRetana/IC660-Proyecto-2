@@ -59,11 +59,12 @@ function App() {
     };
 
     if (executing) {
-      execute();
+      execute(); 
     }
 
     console.warn("cambio");
   }, [executing]);
+
 
   return (
     <>

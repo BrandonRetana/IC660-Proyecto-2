@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+.vite
+.vite/
+
+IC660-Proyecto-2/Frontend/.vite

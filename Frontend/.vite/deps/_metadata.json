@@ -1,0 +1,40 @@
+{
+  "hash": "d77e1bcf",
+  "configHash": "b565d2ce",
+  "lockfileHash": "8f6ee820",
+  "browserHash": "5b54cbf8",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "93d45be7",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "fb16ef36",
+      "needsInterop": true
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "c4e32f9d",
+      "needsInterop": false
+    },
+    "react-drag-drop-files": {
+      "src": "../../node_modules/react-drag-drop-files/dist/react-drag-drop-files.esm.js",
+      "file": "react-drag-drop-files.js",
+      "fileHash": "267b9ce0",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-32E4H3EV": {
+      "file": "chunk-32E4H3EV.js"
+    },
+    "chunk-G3PMV62Z": {
+      "file": "chunk-G3PMV62Z.js"
+    }
+  }
+}
