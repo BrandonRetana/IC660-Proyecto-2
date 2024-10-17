@@ -40,12 +40,16 @@ function App() {
   useEffect(() => {
     const execute = async () => {
       try {
-        while (executing) {
+        while (true) {
+          if (!executing) break;
+
           const result = await executeStep();
           setData(result);
-          setProcess(process - 1);
-          if (process === 0) {
+          setProcess((prevProcess) => prevProcess - 1);
+
+          if (process === 1) {
             setExecuting(false);
+            break;
           }
         }
       } catch (error) {
@@ -57,6 +61,7 @@ function App() {
     if (executing) {
       execute();
     }
+
     console.warn("cambio");
   }, [executing]);
 

@@ -24,11 +24,11 @@ export default function RamState({ title, data }: Props) {
   const styles = useStyle();
   const cells = Array.from({ length: 100 }, (_, i) => i + 1);
 
-  const ramData = data?.pageTable.reduce((acc, { pid, pageId }) => {
+  const ramData = data?.pageTable.reduce((acc, { pid, maddr }) => {
     if (!acc[pid]) {
       acc[pid] = { pages: [] };
     }
-    acc[pid].pages.push(pageId);
+    acc[pid].pages.push(maddr);
     return acc;
   }, {} as Record<number, { pages: number[] }>);
 
