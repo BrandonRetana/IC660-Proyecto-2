@@ -1,11 +1,10 @@
 package tec.ic660.pagination.domain.entity.memory;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
@@ -24,7 +23,6 @@ public class MMUEntity {
     private Integer pagesInMemory;
     private Integer simulationTime;
     private Integer TrashingTime;
-
 
     public MMUEntity() {
         this.realMemory = new LimitedList<>(100);
@@ -49,134 +47,109 @@ public class MMUEntity {
         PTR ptr = new PTR(pid);
         List<PageEntity> pages = new ArrayList<>();
         int pageTimeCounter = 0;
-        int remainingSize = size; 
+        int remainingSize = size;
         int usedSpace;
-        try {
+        // Nuevas paginas y memroia vacia
         for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
-            if (realMemory.get(i) == null) {
-                usedSpace = Math.min(remainingSize, PAGE_SIZE);
-                PageEntity page = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
-                realMemory.set(i, page);
-                pagingAlgorithm.addPageToAlgorithmStructure(page);
-                pages.add(page);
-                page.setLoadedTime(pageTimeCounter);
-                remainingSize -= usedSpace;  
-                requiredPages--;
+            if (this.realMemory.get(i) == null) {
+                // Page
+                usedSpace = Math.min(remainingSize, this.PAGE_SIZE);
+                PageEntity nerwPageEntity = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
+                nerwPageEntity.setLoadedTime(pageTimeCounter);
+                pages.add(nerwPageEntity);
+                realMemory.set(i, nerwPageEntity);
+                pagingAlgorithm.addPageToAlgorithmStructure(nerwPageEntity);
+                // Metrics
                 pagesInMemory++;
+                remainingSize -= usedSpace;
                 simulationTime += 1;
                 pageTimeCounter += 1;
+                requiredPages--;
             }
         }
-    } catch (Exception e) {
-        System.out.println("Se al momento la memoria nueva y hay espacio");
-    }
-        
+        // Nuevas paginas, memoria llena
         if (requiredPages > 0) {
-            for (int i = 0; i < requiredPages; i++) {
-
-                usedSpace = Math.min(remainingSize, PAGE_SIZE);
-                PageEntity page = new PageEntity(-1000, true, ptr.getId(), simulationTime, usedSpace);
-                pagingAlgorithm.addPageToAlgorithmStructure(page);
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
-                pages.add(page);
-                page.setLoadedTime(pageTimeCounter);
+            for (int j = 0; j < requiredPages; j++) {
+                // Page
+                usedSpace = Math.min(remainingSize, this.PAGE_SIZE);
+                PageEntity newPageEntity = new PageEntity(-1000, true, ptr.getId(), simulationTime, usedSpace);
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, newPageEntity);
+                newPageEntity.setLoadedTime(pageTimeCounter);
+                pages.add(newPageEntity);
+                // Metrics
                 remainingSize -= usedSpace;
                 simulationTime += 5;
-                TrashingTime += 5;
                 pageTimeCounter += 5;
-
             }
-        
         }
-   
-        memoryMap.put(ptr, pages);
+
+        this.memoryMap.put(ptr, pages);
         return ptr;
     }
-    
-
-  
-
 
     public void useMemory(PTR ptr) {
         List<PageEntity> pages = memoryMap.get(ptr);
-        if (pages == null) {
-            System.out.println("Puntero no encontrado.");
-            return;
-        }
-        int pageTimeCounter = 0;
-
-        for (PageEntity page : pages) {
-            if (!page.isInRealMemory() ){
-                if (pagesInMemory == MAX_MEMORY_PAGES) {
-                    pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page); 
-                }else{
-                    pagingAlgorithm.movePageToRealMemory(this.realMemory, this.virtualMemory, page);
-                    pagesInMemory++;
-                    pagingAlgorithm.addPageToAlgorithmStructure(page);      
+        Integer pageTimeCounter = 0;
+        for (PageEntity pageEntity : pages) {
+            // Hit
+            if (pageEntity.isInRealMemory()) {
+                pageEntity.setLoadedTime(pageTimeCounter);
+                pageEntity.setTimeStamp(this.simulationTime);
+                this.simulationTime += 1;
+                pageTimeCounter += 1;
+            }
+            // Faild y memorua suficiente
+            if (!pageEntity.isInRealMemory() && pagesInMemory < this.MAX_MEMORY_PAGES) {
+                for (int i = 0; i < this.MAX_MEMORY_PAGES; i++) {
+                    if (realMemory.get(i) == null) {
+                        virtualMemory.remove(pageEntity);
+                        realMemory.set(i, pageEntity);
+                        pageEntity.setInRealMemory(true);
+                        pageEntity.setPhysicalAddres(i);
+                        pageEntity.setLoadedTime(pageTimeCounter);
+                        pageEntity.setTimeStamp(this.simulationTime);
+                        this.simulationTime += 5;
+                        pageTimeCounter += 5;
+                    }
                 }
-                page.setLoadedTime(pageTimeCounter);
-                page.setTimeStarted(simulationTime);    
-                simulationTime+=5;
-                TrashingTime+=5;
-                pageTimeCounter+=5;
             }
-            else{
-                page.setLoadedTime(pageTimeCounter);
-                simulationTime+=1; 
-                pageTimeCounter+=1;
+
+            // Faild y memoria llena
+            if (!pageEntity.isInRealMemory() && pagesInMemory == this.MAX_MEMORY_PAGES) {
+                this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);
+                pageEntity.setLoadedTime(pageTimeCounter);
+                pageEntity.setTimeStamp(this.simulationTime);
+                this.simulationTime += 5;
+                pageTimeCounter += 5;
             }
-            if (pagingAlgorithm instanceof SecondChanceAlgorithm) {
-                page.setReferenceBit(true);
-            }
-            if (pagingAlgorithm instanceof MRUAlgorithm) { 
-                ((MRUAlgorithm) pagingAlgorithm).pushPageToTop(page);
-            }
+
         }
+
     }
 
     public void deleteMemory(PTR ptr) {
         List<PageEntity> pages = memoryMap.get(ptr);
-        for (PageEntity page : pages) {
-            if (page.isInRealMemory()) {
-                Integer pageIndex = realMemory.indexOf(page);
-                this.realMemory.set(pageIndex, null);
-                this.virtualMemory.remove(page);
-                pagesInMemory--;
-                pagingAlgorithm.removePageFromAlgorithmStructure(page);
+        for (PageEntity pageEntity: pages) {
+            if (pageEntity.isInRealMemory()) {
+                realMemory.set(pageEntity.getPhysicalAddres(), null);
+                this.pagesInMemory--;
+                pagingAlgorithm.removePageFromAlgorithmStructure(pageEntity);
             }
             else{
-            this.virtualMemory.remove(page);
+                virtualMemory.remove(pageEntity);
             }
         }
         memoryMap.remove(ptr);
     }
 
-    private void deleteMemory(PTR ptr, Boolean kill) {
-        List<PageEntity> pages = memoryMap.get(ptr);
-        for (PageEntity page : pages) {
-            if (page.isInRealMemory()) {
-                Integer pageIndex = realMemory.indexOf(page);
-                this.realMemory.set(pageIndex, null);
-                this.virtualMemory.remove(page);
-
-                pagesInMemory--;
-                pagingAlgorithm.removePageFromAlgorithmStructure(page);
-            }
-            else{
-            this.virtualMemory.remove(page);
-            }
-        }
-    }
-
     public void killProcessMemory(int pid) {
-        Iterator<Map.Entry<PTR, List<PageEntity>>> iterator = memoryMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<PTR, List<PageEntity>> entry = iterator.next();
-            if (entry.getKey().getPid() == pid) {
-                deleteMemory(entry.getKey(), true);
-                iterator.remove(); 
+         Set<PTR> keysSet = memoryMap.keySet();
+         List<PTR> ptrs = new ArrayList<>(keysSet);
+         for (PTR ptr : ptrs) {
+            if (ptr.getPid() == pid) {
+                deleteMemory(ptr);
             }
-        }
+         }
     }
 
     public int getMemoryFragmentation() {
@@ -192,7 +165,7 @@ public class MMUEntity {
         }
         return totalFragmentation / 1024;
     }
-    
+
     public List<PageEntity> getRealMemory() {
         return realMemory;
     }
@@ -216,6 +189,5 @@ public class MMUEntity {
     public Integer getPagesInMemory() {
         return pagesInMemory;
     }
-
 
 }

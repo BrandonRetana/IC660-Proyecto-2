@@ -45,8 +45,6 @@ public class SimulationService {
         int id = Integer.parseInt(parts[0].trim());
         int size = Integer.parseInt(parts[1].trim());
         PTR ptr = this.mmu.newMemory(id, size);
-        ptr.setInitialMemory(size);
-        this.totalMemory += size;
         this.scheduler.addPtr2Process(id, ptr);
     }
 

@@ -11,22 +11,25 @@ public abstract class PagingAlgorithm {
     public abstract void removePageFromAlgorithmStructure(PageEntity page);
 
     public void movePageToRealMemory(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
+        virtualMemory.remove(page);
         for (int i = 0; i < 100; i++) {
             if (realMemory.get(i) == null) {
                 realMemory.set(i, page);
                 page.setInRealMemory(true);
                 page.setPhysicalAddress(i);
-                virtualMemory.remove(page);
+                addPageToAlgorithmStructure(page);
                 return;
             }
         }
+        System.out.println("Aqui no debe de caer, estoy en move to realMemory");
     }
+
+
     public void movePageToVirtualMemory(List<PageEntity> virtualMemory, List<PageEntity> realMemory, PageEntity page) {
-        Integer indexPage2remove = realMemory.indexOf(page);
-        realMemory.set(indexPage2remove, null);
-        virtualMemory.add(page);
-        page.setInRealMemory(false);
-        page.setPhysicalAddress(100+virtualMemory.size());
+        realMemory.set(page.getPhysicalAddres(), null);
         removePageFromAlgorithmStructure(page);
+        page.setInRealMemory(false);
+        page.setPhysicalAddress(100+page.getId());
+        virtualMemory.add(page);
     }
 }

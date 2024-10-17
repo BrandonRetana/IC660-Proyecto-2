@@ -23,6 +23,7 @@ public class PageEntity {
      
     }
 
+
     public int getId() {
         return id;
     }
@@ -78,12 +79,7 @@ public class PageEntity {
         PageEntity.counter = counter;
     }
 
-    public int getTimeStarted() {
-        return timeStamp;
-    }
-    public void setTimeStarted(int timeStamp) {
-        this.timeStamp = timeStamp;
-    }
+
     public int getUsedSpace() {
         return usedSpace;
     }
@@ -97,6 +93,16 @@ public class PageEntity {
         return "PageEntity [id=" + id + ", physicalAddres=" + physicalAddres + ", isInRealMemory=" + isInRealMemory
                 + ", referenceBit=" + referenceBit + ", ptrId=" + ptrId + ", LoadedTime=" + LoadedTime + ", timeStamp="
                 + timeStamp + "]";
+    }
+
+
+    public int getTimeStamp() {
+        return timeStamp;
+    }
+
+
+    public void setTimeStamp(int timeStamp) {
+        this.timeStamp = timeStamp;
     }
 
     
