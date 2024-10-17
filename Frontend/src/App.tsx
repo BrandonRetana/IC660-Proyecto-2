@@ -38,33 +38,28 @@ function App() {
   const [process, setProcess] = useState(0);
 
   useEffect(() => {
-    const execute = async () => {
-      try {
-        while (true) {
-          if (!executing) break;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let interval: any;
 
+    if (executing && process > 0) {
+      interval = setInterval(async () => {
+        try {
           const result = await executeStep();
           setData(result);
           setProcess((prevProcess) => prevProcess - 1);
 
-          if (process === 1) {
+          if (process <= 1) {
             setExecuting(false);
-            break;
           }
+        } catch (error) {
+          console.error("Error al ejecutar el paso:", error);
+          setExecuting(false);
         }
-      } catch (error) {
-        console.error("Error al ejecutar el paso:", error);
-        setExecuting(false);
-      }
-    };
-
-    if (executing) {
-      execute(); 
+      }, 100);
     }
 
-    console.warn("cambio");
-  }, [executing]);
-
+    return () => clearInterval(interval);
+  }, [executing, process]);
 
   return (
     <>
@@ -73,9 +68,7 @@ function App() {
           handleClose={() => setShowPopUp(false)}
           handleStart={() => setExecuting(true)}
           handleShowController={() => setControllerView(true)}
-          handleSetProcess={(value: number) => {
-            setProcess(value);
-          }}
+          handleSetProcess={(value: number) => setProcess(value)}
         />
       )}
       <div className="Monitor">
