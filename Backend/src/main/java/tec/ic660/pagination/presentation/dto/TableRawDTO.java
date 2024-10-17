@@ -11,7 +11,9 @@ public class TableRawDTO {
     private String loadedT;
     private String mark;
 
-    public TableRawDTO() {}
+    public TableRawDTO() {
+        this.mAddr = -1;
+    }
 
     public int getPageId() {
         return pageId;
