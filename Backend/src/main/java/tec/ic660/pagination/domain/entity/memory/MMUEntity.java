@@ -57,7 +57,6 @@ public class MMUEntity {
                 PageEntity nerwPageEntity = new PageEntity(i, true, ptr.getId(), simulationTime, usedSpace);
                 nerwPageEntity.setLoadedTime(pageTimeCounter);
                 pages.add(nerwPageEntity);
-                System.out.println("Yo fui, move to nuevas paginas y memoria vacia new");
                 realMemory.set(i, nerwPageEntity);
                 pagingAlgorithm.addPageToAlgorithmStructure(nerwPageEntity);
                 // Metrics
@@ -109,7 +108,6 @@ public class MMUEntity {
                         pageEntity.setPhysicalAddres(i);
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
-                        System.out.println("Yo fui, Faild y memorua suficiente use " + pagesInMemory);
                         realMemory.set(i, pageEntity);
                         this.simulationTime += 5;
                         pageTimeCounter += 5;

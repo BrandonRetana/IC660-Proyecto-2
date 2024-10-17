@@ -51,11 +51,8 @@ public class SimulationService {
     private void executeUse(String instruction) {
         int id = Integer.parseInt(instruction.substring(4, instruction.length() - 1));
         PTR ptr = this.scheduler.getPTRbyId(id);
-        try {
         this.mmu.useMemory(ptr);
-    } catch (Exception e) {
-        System.out.println("instructions: "+instruction+"id "+id+"ptr "+ptr);
-    }
+
     }
 
     private void executeDelete(String instruction) {
@@ -74,7 +71,6 @@ public class SimulationService {
 
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
-        System.out.println(instruction);
         if (instruction.startsWith("new")) {
             this.executeNew(instruction);
         } else if (instruction.startsWith("use")) {
