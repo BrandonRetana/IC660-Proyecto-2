@@ -14,9 +14,9 @@ public abstract class PagingAlgorithm {
         virtualMemory.remove(page);
         for (int i = 0; i < 100; i++) {
             if (realMemory.get(i) == null) {
-                realMemory.set(i, page);
                 page.setInRealMemory(true);
-                page.setPhysicalAddress(i);
+                page.setPhysicalAddres(i);
+                realMemory.set(i, page);
                 addPageToAlgorithmStructure(page);
                 return;
             }
@@ -29,7 +29,7 @@ public abstract class PagingAlgorithm {
         realMemory.set(page.getPhysicalAddres(), null);
         removePageFromAlgorithmStructure(page);
         page.setInRealMemory(false);
-        page.setPhysicalAddress(100+page.getId());
+        page.setPhysicalAddres(100+page.getId());
         virtualMemory.add(page);
     }
 }

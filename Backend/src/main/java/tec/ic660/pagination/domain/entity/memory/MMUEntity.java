@@ -97,19 +97,21 @@ public class MMUEntity {
                 pageEntity.setTimeStamp(this.simulationTime);
                 this.simulationTime += 1;
                 pageTimeCounter += 1;
+                System.out.println("Hit");
             }
             // Faild y memorua suficiente
             if (!pageEntity.isInRealMemory() && pagesInMemory < this.MAX_MEMORY_PAGES) {
                 for (int i = 0; i < this.MAX_MEMORY_PAGES; i++) {
                     if (realMemory.get(i) == null) {
                         virtualMemory.remove(pageEntity);
-                        realMemory.set(i, pageEntity);
                         pageEntity.setInRealMemory(true);
                         pageEntity.setPhysicalAddres(i);
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
+                        realMemory.set(i, pageEntity);
                         this.simulationTime += 5;
                         pageTimeCounter += 5;
+                        System.out.println("Faild y memorua suficiente");
                     }
                 }
             }

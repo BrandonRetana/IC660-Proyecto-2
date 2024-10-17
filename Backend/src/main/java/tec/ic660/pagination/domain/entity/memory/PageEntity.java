@@ -56,9 +56,6 @@ public class PageEntity {
         this.ptrId = ptrId;
     }
 
-    public void setPhysicalAddress(int physicalAddres) {
-        this.physicalAddres = physicalAddres;
-    }
 
     public boolean isMarked(){
         return referenceBit;
@@ -79,7 +76,12 @@ public class PageEntity {
         PageEntity.counter = counter;
     }
 
-
+    public int getTimeStarted() {
+        return timeStamp;
+    }
+    public void setTimeStarted(int timeStamp) {
+        this.timeStamp = timeStamp;
+    }
     public int getUsedSpace() {
         return usedSpace;
     }
@@ -87,6 +89,7 @@ public class PageEntity {
         this.usedSpace = usedSpace;
     }
 
+    
 
     @Override
     public String toString() {
@@ -105,6 +108,7 @@ public class PageEntity {
         this.timeStamp = timeStamp;
     }
 
+    
     
 
 }
