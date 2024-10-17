@@ -39,12 +39,10 @@ function App() {
   useEffect(() => {
     const execute = async () => {
       try {
-        while (executing) {
-          const result = await executeStep();
-          setData(result);
-          console.warn(result);
-
-          await new Promise((resolve) => setTimeout(resolve, 500));
+        while (executing) { 
+          const result = await executeStep(); 
+          setData(result); 
+          console.warn(result); 
         }
       } catch (error) {
         console.error("Error al ejecutar el paso:", error);
@@ -53,9 +51,11 @@ function App() {
     };
 
     if (executing) {
-      execute();
+      execute(); 
     }
+
   }, [executing]);
+
 
   return (
     <>

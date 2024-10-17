@@ -14,6 +14,8 @@ public class FIFOAlgorithm extends PagingAlgorithm {
         this.fifoQueue = new LinkedList<>();
     }
 
+    
+
     @Override
     public void addPageToAlgorithmStructure(PageEntity page) {
         fifoQueue.add(page);
@@ -28,4 +30,17 @@ public class FIFOAlgorithm extends PagingAlgorithm {
         movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
         movePageToRealMemory(realMemory, virtualMemory, page);
     }
+
+    public Queue<PageEntity> getFifoQueue() {
+        return fifoQueue;
+    }
+
+
+
+    @Override
+    public String toString() {
+        return "FIFOAlgorithm [fifoQueue=" + fifoQueue.size() + "]";
+    }
+
+    
 }

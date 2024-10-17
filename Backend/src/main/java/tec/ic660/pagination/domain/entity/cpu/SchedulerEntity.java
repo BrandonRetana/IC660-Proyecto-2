@@ -59,7 +59,6 @@ public class SchedulerEntity {
             this.allPTRs.remove(ptr.getId());
         }
         this.processTable.remove(pid);
-        System.out.println("Process and all associated PTRs removed successfully");
     }
 
     public Integer getNumberOfProcess() {

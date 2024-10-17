@@ -193,7 +193,7 @@ public class SimulationService {
         Integer totalProcesses = this.scheduler.getNumberOfProcess();
 
         // Memory information
-        Integer realMemoryUsageInKb = this.mmu.getPagesInMemory() * 4;
+        Integer realMemoryUsageInKb = this.mmu.getRealMemory().getNumberOfPages() * 4;
         Double realMemoryUsagePercentage = calculatePercentage(realMemoryUsageInKb, 400);
         Integer virtualMemoryUsageInKb = this.mmu.getVirtualMemory().size() * 4;
         Double virtualMemoryUsagePercentage = calculatePercentage(virtualMemoryUsageInKb, realMemoryUsageInKb);
@@ -202,7 +202,7 @@ public class SimulationService {
         Integer internalFragmentation = getInteralFragmentation(this.totalMemory, pageTable.size());
         Integer trashingDuration = this.mmu.getTrashingTime();
         Double trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
-        Integer pagesLoadedInMemory = this.mmu.getPagesInMemory();
+        Integer pagesLoadedInMemory = this.mmu.getRealMemory().getNumberOfPages();
         Integer pagesInVirtualMemory = this.mmu.getVirtualMemory().size();
 
         // Crear el DTO y llenar sus campos

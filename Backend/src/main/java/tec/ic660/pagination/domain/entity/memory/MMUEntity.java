@@ -8,26 +8,25 @@ import java.util.Set;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
-import tec.ic660.pagination.domain.valueObjects.LimitedList;
+
 import tec.ic660.pagination.domain.valueObjects.PTR;
+import tec.ic660.pagination.domain.valueObjects.RealMemory;
 
 public class MMUEntity {
     private final int PAGE_SIZE = 4096;
     private final int MAX_MEMORY_PAGES = 100;
-    private final List<PageEntity> realMemory;
+    private final RealMemory<PageEntity> realMemory;
     private final List<PageEntity> virtualMemory;
     private final Map<PTR, List<PageEntity>> memoryMap;
     private PagingAlgorithm pagingAlgorithm;
-    private Integer pagesInMemory;
     private Integer simulationTime;
     private Integer TrashingTime;
 
     public MMUEntity() {
-        this.realMemory = new LimitedList<>(100);
+        this.realMemory = new RealMemory<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
         this.pagingAlgorithm = new FIFOAlgorithm();
-        this.pagesInMemory = 0;
         this.simulationTime = 0;
         this.TrashingTime = 0;
     }
@@ -58,7 +57,6 @@ public class MMUEntity {
                 realMemory.set(i, nerwPageEntity);
                 pagingAlgorithm.addPageToAlgorithmStructure(nerwPageEntity);
                 // Metrics
-                pagesInMemory++;
                 remainingSize -= usedSpace;
                 simulationTime += 1;
                 pageTimeCounter += 1;
@@ -98,7 +96,7 @@ public class MMUEntity {
             }
 
             // Faild y memorua suficiente
-            if (!pageEntity.isInRealMemory() && pagesInMemory < this.MAX_MEMORY_PAGES) {
+            if (!pageEntity.isInRealMemory() && this.realMemory.getNumberOfPages() < this.MAX_MEMORY_PAGES) {
                 for (int i = 0; i < this.MAX_MEMORY_PAGES; i++) {
                     if (realMemory.get(i) == null) {
                         virtualMemory.remove(pageEntity);
@@ -107,9 +105,9 @@ public class MMUEntity {
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
                         realMemory.set(i, pageEntity);
+                        this.pagingAlgorithm.addPageToAlgorithmStructure(pageEntity);
                         this.simulationTime += 5;
                         pageTimeCounter += 5;
-                        pagesInMemory++;
                         break;
                     }
                 }
@@ -131,9 +129,7 @@ public class MMUEntity {
         List<PageEntity> pages = memoryMap.get(ptr);
         for (PageEntity pageEntity: pages) {
             if (pageEntity.isInRealMemory()) {
-                System.out.println("Yo fui, deleteMemory");
                 realMemory.set(pageEntity.getPhysicalAddres(), null);
-                this.pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(pageEntity);
             }
             else{
@@ -167,7 +163,7 @@ public class MMUEntity {
         return totalFragmentation / 1024;
     }
 
-    public List<PageEntity> getRealMemory() {
+    public RealMemory<PageEntity> getRealMemory() {
         return realMemory;
     }
 
@@ -187,8 +183,12 @@ public class MMUEntity {
         return simulationTime;
     }
 
-    public Integer getPagesInMemory() {
-        return pagesInMemory;
+    public PagingAlgorithm getPagingAlgorithm() {
+        return pagingAlgorithm;
     }
+
+
+
+    
 
 }
