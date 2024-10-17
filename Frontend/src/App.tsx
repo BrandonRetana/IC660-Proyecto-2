@@ -35,14 +35,18 @@ function App() {
   const [data, setData] = useState<Data | undefined>(undefined);
   const [executing, setExecuting] = useState(false);
   const [controllerView, setControllerView] = useState(false);
+  const [process, setProcess] = useState(0);
 
   useEffect(() => {
     const execute = async () => {
       try {
-        while (executing) { 
-          const result = await executeStep(); 
-          setData(result); 
-          console.warn(result); 
+        while (executing) {
+          const result = await executeStep();
+          setData(result);
+          setProcess(process - 1);
+          if (process === 0) {
+            setExecuting(false);
+          }
         }
       } catch (error) {
         console.error("Error al ejecutar el paso:", error);
@@ -53,7 +57,7 @@ function App() {
     if (executing) {
       execute(); 
     }
-
+    console.warn("cambio");
   }, [executing]);
 
 
@@ -64,6 +68,9 @@ function App() {
           handleClose={() => setShowPopUp(false)}
           handleStart={() => setExecuting(true)}
           handleShowController={() => setControllerView(true)}
+          handleSetProcess={(value: number) => {
+            setProcess(value);
+          }}
         />
       )}
       <div className="Monitor">

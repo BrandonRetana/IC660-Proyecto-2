@@ -8,9 +8,15 @@ interface PopUpProps {
   handleClose: () => void;
   handleStart: () => void;
   handleShowController: () => void;
+  handleSetProcess: (amount: number) => void;
 }
 
-function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
+function PopUp({
+  handleClose,
+  handleStart,
+  handleShowController,
+  handleSetProcess,
+}: PopUpProps) {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("Archivo");
   const [seed, setSeed] = useState<string | number>("");
@@ -66,7 +72,6 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
         const formattedInstructions = response.join("\n");
 
         setInstructions(formattedInstructions);
-        console.warn("Configuración enviada con éxito:", formattedInstructions);
       } catch (error) {
         console.error("Error al enviar la configuración:", error);
       }
@@ -74,6 +79,7 @@ function PopUp({ handleClose, handleStart, handleShowController }: PopUpProps) {
       handleClose();
       handleStart();
       handleShowController();
+      handleSetProcess(process || 0);
     }
   };
 
