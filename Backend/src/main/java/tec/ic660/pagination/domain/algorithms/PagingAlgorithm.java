@@ -22,10 +22,11 @@ public abstract class PagingAlgorithm {
         }
     }
     public void movePageToVirtualMemory(List<PageEntity> virtualMemory, List<PageEntity> realMemory, PageEntity page) {
+        Integer indexPage2remove = realMemory.indexOf(page);
+        realMemory.set(indexPage2remove, null);
         virtualMemory.add(page);
         page.setInRealMemory(false);
         page.setPhysicalAddress(100+virtualMemory.size());
         removePageFromAlgorithmStructure(page);
-        realMemory.remove(page);
     }
 }

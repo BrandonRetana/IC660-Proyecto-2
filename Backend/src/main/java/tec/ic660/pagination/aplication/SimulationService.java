@@ -32,8 +32,6 @@ public class SimulationService {
 
     private Integer totalMemory;
 
-    private int counterPtr = 0;
-
     public SimulationService() {
         this.totalMemory = 0;
         this.mmu = new MMUEntity();
@@ -50,8 +48,6 @@ public class SimulationService {
         ptr.setInitialMemory(size);
         this.totalMemory += size;
         this.scheduler.addPtr2Process(id, ptr);
-        this.counterPtr++;
-        //System.out.println(counterPtr);
     }
 
     private void executeUse(String instruction) {

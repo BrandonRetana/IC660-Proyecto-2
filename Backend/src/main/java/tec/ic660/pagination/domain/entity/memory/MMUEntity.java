@@ -11,6 +11,7 @@ import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
+import tec.ic660.pagination.domain.valueObjects.LimitedList;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
 public class MMUEntity {
@@ -26,7 +27,7 @@ public class MMUEntity {
 
 
     public MMUEntity() {
-        this.realMemory = new ArrayList<>(Collections.nCopies(100, null));
+        this.realMemory = new LimitedList<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
         this.pagingAlgorithm = new FIFOAlgorithm();
@@ -50,7 +51,7 @@ public class MMUEntity {
         int pageTimeCounter = 0;
         int remainingSize = size; 
         int usedSpace;
-    
+        try {
         for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
             if (realMemory.get(i) == null) {
                 usedSpace = Math.min(remainingSize, PAGE_SIZE);
@@ -66,23 +67,28 @@ public class MMUEntity {
                 pageTimeCounter += 1;
             }
         }
+    } catch (Exception e) {
+        System.out.println("Se al momento la memoria nueva y hay espacio");
+    }
+        
         if (requiredPages > 0) {
             for (int i = 0; i < requiredPages; i++) {
+
                 usedSpace = Math.min(remainingSize, PAGE_SIZE);
                 PageEntity page = new PageEntity(-1000, true, ptr.getId(), simulationTime, usedSpace);
-                
-                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
                 pagingAlgorithm.addPageToAlgorithmStructure(page);
-           
+                pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page);   
                 pages.add(page);
                 page.setLoadedTime(pageTimeCounter);
                 remainingSize -= usedSpace;
                 simulationTime += 5;
                 TrashingTime += 5;
                 pageTimeCounter += 5;
+
             }
-        }
         
+        }
+   
         memoryMap.put(ptr, pages);
         return ptr;
     }
@@ -104,7 +110,7 @@ public class MMUEntity {
                 if (pagesInMemory == MAX_MEMORY_PAGES) {
                     pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, page); 
                 }else{
-                    pagingAlgorithm.movePageToRealMemory(realMemory, virtualMemory, page);
+                    pagingAlgorithm.movePageToRealMemory(this.realMemory, this.virtualMemory, page);
                     pagesInMemory++;
                     pagingAlgorithm.addPageToAlgorithmStructure(page);      
                 }
@@ -133,8 +139,8 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 Integer pageIndex = realMemory.indexOf(page);
-                realMemory.remove(page);
-                this.realMemory.add(pageIndex, null);
+                this.realMemory.set(pageIndex, null);
+                this.virtualMemory.remove(page);
                 pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
             }
@@ -150,8 +156,9 @@ public class MMUEntity {
         for (PageEntity page : pages) {
             if (page.isInRealMemory()) {
                 Integer pageIndex = realMemory.indexOf(page);
-                realMemory.remove(page);
-                this.realMemory.add(pageIndex, null);
+                this.realMemory.set(pageIndex, null);
+                this.virtualMemory.remove(page);
+
                 pagesInMemory--;
                 pagingAlgorithm.removePageFromAlgorithmStructure(page);
             }
