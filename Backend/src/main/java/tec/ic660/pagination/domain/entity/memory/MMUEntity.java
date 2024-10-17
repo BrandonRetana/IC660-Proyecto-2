@@ -7,9 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
-import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
-import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.LimitedList;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 
@@ -115,7 +113,6 @@ public class MMUEntity {
                     }
                 }
             }
-
             // Faild y memoria llena
             if (!pageEntity.isInRealMemory() && pagesInMemory == this.MAX_MEMORY_PAGES) {
                 this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import MMUTable from "./components/MMUTable";
 import RamState from "./components/RAMState";
@@ -7,56 +7,63 @@ import RAMDetails from "./components/RAMDetails";
 import ProcessesSimTime from "./components/ProcessesSimTime";
 import PopUp from "./components/PopUp";
 import { executeStep } from "./service/config.service";
-import dataDummy from "./dataDummy";
 
-import { useEffect, useState } from "react";
+// Definir los tipos esperados
+interface SimulationReport {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pageTable: any[];
+  simulationDuration: number;
+  totalProcesses: number;
+  realMemoryUsageInKb: number;
+  realMemoryUsagePercentage: number;
+  virtualMemoryUsageInKb: number;
+  virtualMemoryUsagePercentage: number;
+  internalFragmentation: number;
+  trashingDuration: number;
+  trashingPercentage: number;
+  pagesLoadedInMemory: number;
+  pagesInVirtualMemory: number;
+}
+
+interface Data {
+  simulationReport1: SimulationReport;
+  simulationReport2: SimulationReport;
+}
 
 function App() {
   const [showPopUp, setShowPopUp] = useState(true);
-  const [data, setData] = useState<typeof dataDummy | undefined>(undefined);
-
+  const [data, setData] = useState<Data | undefined>(undefined);
   const [executing, setExecuting] = useState(false);
   const [controllerView, setControllerView] = useState(false);
-
-  //---Valores para enviar a los componentes---//
 
   useEffect(() => {
     const execute = async () => {
       try {
-        while (executing) { // Ejecutar mientras `executing` sea verdadero
-          const result = await executeStep(); // Esperar la respuesta del backend
-          setData(result); // Actualizar el estado con la respuesta del backend
-          console.warn(result); // Mostrar en consola el resultado
+        while (executing) {
+          const result = await executeStep();
+          setData(result);
+          console.warn(result);
+
+          await new Promise((resolve) => setTimeout(resolve, 500));
         }
       } catch (error) {
         console.error("Error al ejecutar el paso:", error);
-        setExecuting(false); // Detener la ejecución si ocurre un error
+        setExecuting(false);
       }
     };
-  
-    if (executing) {
-      execute(); // Iniciar el ciclo si `executing` es verdadero
-    }
-  
-  }, [executing]); // Ejecutar solo cuando cambie el estado de `executing`
 
-  setTimeout(() => {
-    setData(dataDummy);
-  }, 2000);
+    if (executing) {
+      execute();
+    }
+  }, [executing]);
 
   return (
     <>
       {showPopUp && (
         <PopUp
-          handleClose={() => {
-            setShowPopUp(false);
-          }}
-          handleStart={() => {
-            setExecuting(true);
-          }}
-          handleShowController={() => {
-            setControllerView(true);
-          }}
+          handleClose={() => setShowPopUp(false)}
+          handleStart={() => setExecuting(true)}
+          handleShowController={() => setControllerView(true)}
         />
       )}
       <div className="Monitor">
