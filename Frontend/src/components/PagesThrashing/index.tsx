@@ -35,10 +35,18 @@ export default function PagesThrashing({
         <tr>
           <td>{pagesLoadedInMemory && pagesLoadedInMemory}</td>
           <td>{pagesInVirtualMemory && pagesInVirtualMemory}</td>
-          <td className="thrashing">
+          <td
+            className={`thrashing ${
+              trashingPercentage && trashingPercentage >= 50 ? "Danger" : ""
+            }`}
+          >
             {trashingDuration && trashingDuration + "s"}
           </td>
-          <td className="thrashing">
+          <td
+            className={`thrashing ${
+              trashingPercentage && trashingPercentage >= 50 ? "Danger" : ""
+            }`}
+          >
             {trashingPercentage && trashingPercentage + "%"}
           </td>
           <td>{internalFragmentation && internalFragmentation + "KB"}</td>

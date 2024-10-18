@@ -77,50 +77,17 @@ function App() {
         <div className="VStack RamSummary">
           <RamState
             title="RAM - OTP"
-            data={{ pageTable: data?.simulationReport1.pageTable || [] }}
+            data={{ pageTable: data?.simulationReport2.pageTable || [] }}
           />
           <RamState
             title={`RAM - ${algorithm}`}
-            data={{ pageTable: data?.simulationReport2.pageTable || [] }}
+            data={{ pageTable: data?.simulationReport1.pageTable || [] }}
           />
         </div>
         <div className="HStack tables">
           <div className="left VStack">
             <MMUTable
               title="MMU - OTP"
-              data={data?.simulationReport1.pageTable}
-            />
-            <ProcessesSimTime
-              simulationDuration={data?.simulationReport1.simulationDuration}
-              totalProcesses={data?.simulationReport1.totalProcesses}
-            />
-            <RAMDetails
-              realMemoryUsageInKb={data?.simulationReport1.realMemoryUsageInKb}
-              realMemoryUsagePercentage={
-                data?.simulationReport1.realMemoryUsagePercentage
-              }
-              virtualMemoryUsageInKb={
-                data?.simulationReport1.virtualMemoryUsageInKb
-              }
-              virtualMemoryUsagePercentage={
-                data?.simulationReport1.virtualMemoryUsagePercentage
-              }
-            />
-            <PagesThrashing
-              internalFragmentation={
-                data?.simulationReport1.internalFragmentation
-              }
-              trashingDuration={data?.simulationReport1.trashingDuration}
-              trashingPercentage={data?.simulationReport1.trashingPercentage}
-              pagesLoadedInMemory={data?.simulationReport1.pagesLoadedInMemory}
-              pagesInVirtualMemory={
-                data?.simulationReport1.pagesInVirtualMemory
-              }
-            />
-          </div>
-          <div className="right VStack">
-            <MMUTable
-              title={`MMU - ${algorithm}`}
               data={data?.simulationReport2.pageTable}
             />
             <ProcessesSimTime
@@ -148,6 +115,39 @@ function App() {
               pagesLoadedInMemory={data?.simulationReport2.pagesLoadedInMemory}
               pagesInVirtualMemory={
                 data?.simulationReport2.pagesInVirtualMemory
+              }
+            />
+          </div>
+          <div className="right VStack">
+            <MMUTable
+              title={`MMU - ${algorithm}`}
+              data={data?.simulationReport1.pageTable}
+            />
+            <ProcessesSimTime
+              simulationDuration={data?.simulationReport1.simulationDuration}
+              totalProcesses={data?.simulationReport1.totalProcesses}
+            />
+            <RAMDetails
+              realMemoryUsageInKb={data?.simulationReport1.realMemoryUsageInKb}
+              realMemoryUsagePercentage={
+                data?.simulationReport1.realMemoryUsagePercentage
+              }
+              virtualMemoryUsageInKb={
+                data?.simulationReport1.virtualMemoryUsageInKb
+              }
+              virtualMemoryUsagePercentage={
+                data?.simulationReport1.virtualMemoryUsagePercentage
+              }
+            />
+            <PagesThrashing
+              internalFragmentation={
+                data?.simulationReport1.internalFragmentation
+              }
+              trashingDuration={data?.simulationReport1.trashingDuration}
+              trashingPercentage={data?.simulationReport1.trashingPercentage}
+              pagesLoadedInMemory={data?.simulationReport1.pagesLoadedInMemory}
+              pagesInVirtualMemory={
+                data?.simulationReport1.pagesInVirtualMemory
               }
             />
           </div>
