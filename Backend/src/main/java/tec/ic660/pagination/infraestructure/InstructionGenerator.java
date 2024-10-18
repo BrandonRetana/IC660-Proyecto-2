@@ -1,6 +1,14 @@
 package tec.ic660.pagination.infraestructure;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Random;
+import java.util.Set;
 
 public class InstructionGenerator {
 
@@ -80,9 +88,9 @@ public class InstructionGenerator {
         int randomValue = random.nextInt(100) + 1; // Entre 1 y 100
     
         // Asignar rangos a cada instrucción según sus porcentajes
-        if (randomValue <= 40) {
-            return "new";  // 40% probabilidad
-        } else if (randomValue <= 75) {
+        if (randomValue <= 15) {
+            return "new";  // 60% probabilidad
+        } else if (randomValue <= 70) {
             return "use";  // 35% probabilidad
         } else {
             return "delete";  // 23% probabilidad
