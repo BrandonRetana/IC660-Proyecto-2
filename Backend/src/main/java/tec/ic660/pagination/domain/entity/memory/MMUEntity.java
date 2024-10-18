@@ -89,7 +89,7 @@ public class MMUEntity {
             if (pageEntity.isInRealMemory()) {
                 pageEntity.setLoadedTime(pageTimeCounter);
                 pageEntity.setTimeStamp(this.simulationTime);
-                pageEntity.setReferenceBit(true);
+                pageEntity.setReferenceBit(1);
         
                 this.simulationTime += 1;
                 pageTimeCounter += 1;
@@ -104,7 +104,7 @@ public class MMUEntity {
                         pageEntity.setPhysicalAddres(i);
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
-                        pageEntity.setReferenceBit(true);
+                        pageEntity.setReferenceBit(1);
                        
                         realMemory.set(i, pageEntity);
                         this.pagingAlgorithm.addPageToAlgorithmStructure(pageEntity);
@@ -120,7 +120,7 @@ public class MMUEntity {
                 this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);
                 pageEntity.setLoadedTime(pageTimeCounter);
                 pageEntity.setTimeStamp(this.simulationTime);
-                pageEntity.setReferenceBit(true);
+                pageEntity.setReferenceBit(1);
                 
                 this.simulationTime += 5;
                 this.TrashingTime += 5;
@@ -179,7 +179,7 @@ public class MMUEntity {
     public void setPagingAlgorithm(PagingAlgorithm algorithm) {
         this.pagingAlgorithm = algorithm;
     }
-
+    
     public Integer getTrashingTime() {
         return TrashingTime;
     }

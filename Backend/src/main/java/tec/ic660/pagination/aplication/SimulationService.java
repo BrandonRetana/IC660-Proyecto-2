@@ -129,10 +129,16 @@ public class SimulationService {
                 } else {
                     dto.setDAddr(pageEntity.getPhysicalAddres());
                 }
-
                 // Set mark
-                //dto.setMark(pageEntity.getMark());
+                if (this.mmu.getPagingAlgorithm() instanceof SecondChanceAlgorithm) {
+                    dto.setMark(String.valueOf(pageEntity.getReferenceBit())); 
 
+                }else if (this.mmu.getPagingAlgorithm() instanceof MRUAlgorithm){
+                    dto.setMark(String.valueOf(pageEntity.getTimeStamp())+"s"); 
+
+                }else{
+                    dto.setMark("");
+                }
                 // Set time loaded
                 dto.setLoadedT(String.valueOf(pageEntity.getLoadedTime()) + "s"); // Esto parece ser un valor fijo
 
@@ -199,7 +205,6 @@ public class SimulationService {
         Integer internalFragmentation = this.mmu.getMemoryFragmentation();
         Integer trashingDuration = this.mmu.getTrashingTime();
         Float trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
-        System.out.println("Trashing percentage: " + trashingPercentage);
         Integer pagesLoadedInMemory = this.mmu.getRealMemory().getNumberOfPages();
         Integer pagesInVirtualMemory = this.mmu.getVirtualMemory().size();
 
