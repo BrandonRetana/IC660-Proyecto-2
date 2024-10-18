@@ -21,7 +21,13 @@ export default function PagesThrashing({
       <thead>
         <tr>
           <th colSpan={2}>PAGES</th>
-          <th colSpan={2} rowSpan={2}>
+          <th
+            colSpan={2}
+            rowSpan={2}
+            className={` ${
+              trashingPercentage && trashingPercentage >= 50 ? "Danger" : ""
+            }`}
+          >
             Thrashing
           </th>
           <th rowSpan={2}>Fragmentación</th>
