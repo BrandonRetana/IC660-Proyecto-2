@@ -5,7 +5,7 @@ public class PageEntity {
     private int physicalAddres;
     private boolean isInRealMemory;
     private int timeStamp;
-    private boolean referenceBit;
+    private int referenceBit;
     private int ptrId;
     private int usedSpace;
     private int LoadedTime;
@@ -16,7 +16,7 @@ public class PageEntity {
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
         this.timeStamp = TimeStamp;
-        this.referenceBit = true;
+        this.referenceBit = 1;
         this.ptrId = ptrId;
         this.usedSpace = usedSpace;
         this.LoadedTime = 0;
@@ -40,11 +40,11 @@ public class PageEntity {
         this.isInRealMemory = isInRealMemory;
     }
 
-    public boolean getReferenceBit() {
+    public int getReferenceBit() {
         return referenceBit;  
     }
 
-    public void setReferenceBit(boolean referenceBit) {
+    public void setReferenceBit(int referenceBit) {
         this.referenceBit = referenceBit;
     }
     public int getPtrId() {
