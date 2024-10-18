@@ -10,6 +10,7 @@ interface ConfigData {
 
 const API_URL = "/sent/config";
 const EXECUTE_STEP_URL = "/execute/step";
+const SENT_INSTRUCTIONS = "/sent/instructions";
 
 export const sendConfig = async (configData: ConfigData) => {
   try {
@@ -29,4 +30,9 @@ export const executeStep = async () => {
     console.error("Error al ejecutar el siguiente paso:", error);
     throw error;
   }
+};
+
+export const sendInstructions = async (data: object) => {
+  const response = await axios.post(SENT_INSTRUCTIONS, data);
+  return response.data;
 };
