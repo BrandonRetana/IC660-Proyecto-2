@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.MRUAlgorithm;
+import tec.ic660.pagination.domain.algorithms.OptimalAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.algorithms.RandomAlgorithm;
 import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
@@ -232,7 +233,7 @@ public class SimulationService {
     }
     
     public void setOPTAlgorithm() {
-        PagingAlgorithm algorithm = new FIFOAlgorithm();
+        PagingAlgorithm algorithm = new OptimalAlgorithm(this.instructionsQueue);
         this.mmu.setPagingAlgorithm(algorithm);
     }
 

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 import tec.ic660.pagination.domain.valueObjects.RealMemory;
@@ -25,7 +24,6 @@ public class MMUEntity {
         this.realMemory = new RealMemory<>(100);
         this.virtualMemory = new ArrayList<>();
         this.memoryMap = new Hashtable<>();
-        this.pagingAlgorithm = new FIFOAlgorithm();
         this.simulationTime = 0;
         this.TrashingTime = 0;
     }
