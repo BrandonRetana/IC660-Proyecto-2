@@ -8,7 +8,6 @@ import java.util.Set;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
-import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 import tec.ic660.pagination.domain.valueObjects.RealMemory;
 
