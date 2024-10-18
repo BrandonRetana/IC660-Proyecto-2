@@ -5,7 +5,7 @@ public class PageEntity {
     private int physicalAddres;
     private boolean isInRealMemory;
     private int timeStamp;
-    private Integer referenceBit;
+    private boolean referenceBit;
     private int ptrId;
     private int usedSpace;
     private int LoadedTime;
@@ -16,13 +16,11 @@ public class PageEntity {
         this.physicalAddres = physicalAddres;
         this.isInRealMemory = isInRealMemory;
         this.timeStamp = TimeStamp;
-        this.referenceBit = -1;
+        this.referenceBit = true;
         this.ptrId = ptrId;
         this.usedSpace = usedSpace;
         this.LoadedTime = 0;
-     
     }
-
 
     public int getId() {
         return id;
@@ -43,19 +41,11 @@ public class PageEntity {
     }
 
     public boolean getReferenceBit() {
-        if (referenceBit == 1) {
-            return true;
-        }
-        return false;
+        return referenceBit;  
     }
 
     public void setReferenceBit(boolean referenceBit) {
-        if (referenceBit) {
-            this.referenceBit = 1;
-            return;
-        }
-        this.referenceBit = 0;
-
+        this.referenceBit = referenceBit;
     }
     public int getPtrId() {
         return ptrId;
@@ -96,19 +86,9 @@ public class PageEntity {
         return timeStamp;
     }
 
-
     public void setTimeStamp(int timeStamp) {
         this.timeStamp = timeStamp;
     }
-
-    public String getMark(){
-        if (referenceBit == -1) {
-            return String.valueOf(this.timeStamp);
-        }
-        return String.valueOf(this.referenceBit);
-    }
-
-    
 
     @Override
     public String toString() {
