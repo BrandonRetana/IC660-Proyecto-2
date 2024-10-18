@@ -66,14 +66,13 @@ public class OptimalAlgorithm extends PagingAlgorithm {
                 return page;
             } else {
                 // Si la página se usará en el futuro, tomamos el uso más lejano
-                int nextUse = futureUses.remove(0); // Tomamos el próximo uso
-                if (nextUse > farthestUse) {
-                    farthestUse = nextUse;
+                int actualPageFarthestUse = futureUses.get(futureUses.size() - 1); // Tomamos el uso más lejano
+                if (actualPageFarthestUse > farthestUse) {
+                    farthestUse = actualPageFarthestUse;
                     pageToEvict = page;
                 }
             }
         }
-
         return pageToEvict;
     }
 }

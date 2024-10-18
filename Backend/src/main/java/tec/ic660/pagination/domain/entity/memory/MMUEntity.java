@@ -43,7 +43,7 @@ public class MMUEntity {
         int pageTimeCounter = 0;
         int remainingSize = size;
         int usedSpace;
-        // Nuevas paginas y memroia vacia
+        // Nuevas paginas y memoria vacia
         for (int i = 0; i < MAX_MEMORY_PAGES && requiredPages > 0; i++) {
             if (this.realMemory.get(i) == null) {
                 // Page
@@ -55,7 +55,7 @@ public class MMUEntity {
                 pagingAlgorithm.addPageToAlgorithmStructure(nerwPageEntity);
                 // Metrics
                 remainingSize -= usedSpace;
-                simulationTime += 1;
+                this.simulationTime += 1;
                 pageTimeCounter += 1;
                 requiredPages--;
             }
@@ -71,7 +71,7 @@ public class MMUEntity {
                 pages.add(newPageEntity);
                 // Metrics
                 remainingSize -= usedSpace;
-                simulationTime += 5;
+                this.simulationTime += 5;
                 pageTimeCounter += 5;
             }
         }
@@ -94,7 +94,7 @@ public class MMUEntity {
                 pageTimeCounter += 1;
             }
 
-            // Faild y memorua suficiente
+            // Fault y memoria suficiente
             if (!pageEntity.isInRealMemory() && this.realMemory.getNumberOfPages() < this.MAX_MEMORY_PAGES) {
                 for (int i = 0; i < this.MAX_MEMORY_PAGES; i++) {
                     if (realMemory.get(i) == null) {
@@ -113,7 +113,7 @@ public class MMUEntity {
                     }
                 }
             }
-            // Faild y memoria llena
+            // Fault y memoria llena
            else if (!pageEntity.isInRealMemory()) {
                 this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);
                 pageEntity.setLoadedTime(pageTimeCounter);
@@ -134,9 +134,11 @@ public class MMUEntity {
             if (pageEntity.isInRealMemory()) {
                 realMemory.set(pageEntity.getPhysicalAddres(), null);
                 pagingAlgorithm.removePageFromAlgorithmStructure(pageEntity);
+                this.simulationTime += 1;
             }
             else{
                 virtualMemory.remove(pageEntity);
+                this.simulationTime += 5;
             }
         }
         memoryMap.remove(ptr);
