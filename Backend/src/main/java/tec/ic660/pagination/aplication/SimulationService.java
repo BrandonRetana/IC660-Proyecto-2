@@ -66,10 +66,6 @@ public class SimulationService {
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
         System.out.println(instruction);
-        if (instruction == null) {
-            System.out.println("Ya no hay mas we");
-            System.exit(1);
-        }
         if (instruction.startsWith("new")) {
             this.executeNew(instruction);
         } else if (instruction.startsWith("use")) {
@@ -231,7 +227,11 @@ public class SimulationService {
         this.instructionsQueue = instructionsQueue;
     }
 
-    public void setAlgorithm() {
+    public void setSelectedAlgorithm(Integer numOfAlgorithm){
+        this.mmu.setPagingAlgorithm(this.getSelectedAlgorithm(numOfAlgorithm));
+    }
+    
+    public void setOPTAlgorithm() {
         PagingAlgorithm algorithm = new FIFOAlgorithm();
         this.mmu.setPagingAlgorithm(algorithm);
     }
@@ -242,6 +242,8 @@ public class SimulationService {
         this.instructionGenerator = new InstructionGenerator();
         PageEntity.setCounter(0);
         PTR.setCounter(0);
+        this.instructionsQueue = null;
+
     }
 
 }
