@@ -42,9 +42,10 @@ public class OptimalAlgorithm extends PagingAlgorithm {
     }
 
     @Override
-    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity newPage) {
+    public void handlePageFault(List<PageEntity> realMemory, List<PageEntity> virtualMemory, PageEntity page) {
         PageEntity pageToEvict = findOptimalPageToEvict(realMemory);
         movePageToVirtualMemory(virtualMemory, realMemory, pageToEvict);
+        movePageToRealMemory(realMemory, virtualMemory, page);
     }
 
     private PageEntity findOptimalPageToEvict(List<PageEntity> realMemory) {
