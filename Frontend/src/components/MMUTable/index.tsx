@@ -50,7 +50,7 @@ export default function MMUTable({ title, data }: MMUTableProps) {
                 <td>{row.pid}</td>
                 <td>{row.loaded}</td>
                 <td>{row.laddr}</td>
-                <td>{row.maddr}</td>
+                <td>{row.maddr === -1 ? "" : row.maddr}</td>
                 <td>{row.daddr}</td>
                 <td>{row.loadedT}</td>
                 <td>{row.mark}</td>
