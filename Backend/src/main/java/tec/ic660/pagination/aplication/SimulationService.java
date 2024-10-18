@@ -129,7 +129,7 @@ public class SimulationService {
                 }
 
                 // Set mark
-                dto.setMark(pageEntity.getMark());
+                dto.setMark("mark");
 
                 // Set time loaded
                 dto.setLoadedT(String.valueOf(pageEntity.getLoadedTime()) + "s"); // Esto parece ser un valor fijo
