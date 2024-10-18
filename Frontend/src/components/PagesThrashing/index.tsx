@@ -29,7 +29,7 @@ export default function PagesThrashing({
             }`}
           >
             Thrashing{" "}
-            {trashingPercentage && (
+            {trashingPercentage && trashingPercentage >= 50 && (
               <i
                 className="fa-solid fa-triangle-exclamation"
                 style={{ marginLeft: "0.5rem" }}
