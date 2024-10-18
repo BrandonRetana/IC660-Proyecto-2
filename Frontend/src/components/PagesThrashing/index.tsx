@@ -28,7 +28,13 @@ export default function PagesThrashing({
               trashingPercentage && trashingPercentage >= 50 ? "Danger" : ""
             }`}
           >
-            Thrashing
+            Thrashing{" "}
+            {trashingPercentage && (
+              <i
+                className="fa-solid fa-triangle-exclamation"
+                style={{ marginLeft: "0.5rem" }}
+              ></i>
+            )}
           </th>
           <th rowSpan={2}>Fragmentación</th>
         </tr>
