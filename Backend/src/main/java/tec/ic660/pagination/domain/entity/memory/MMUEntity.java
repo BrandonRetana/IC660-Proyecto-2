@@ -8,7 +8,7 @@ import java.util.Set;
 
 import tec.ic660.pagination.domain.algorithms.FIFOAlgorithm;
 import tec.ic660.pagination.domain.algorithms.PagingAlgorithm;
-
+import tec.ic660.pagination.domain.algorithms.SecondChanceAlgorithm;
 import tec.ic660.pagination.domain.valueObjects.PTR;
 import tec.ic660.pagination.domain.valueObjects.RealMemory;
 
@@ -91,6 +91,8 @@ public class MMUEntity {
             if (pageEntity.isInRealMemory()) {
                 pageEntity.setLoadedTime(pageTimeCounter);
                 pageEntity.setTimeStamp(this.simulationTime);
+                pageEntity.setReferenceBit(true);
+        
                 this.simulationTime += 1;
                 pageTimeCounter += 1;
             }
@@ -104,6 +106,8 @@ public class MMUEntity {
                         pageEntity.setPhysicalAddres(i);
                         pageEntity.setLoadedTime(pageTimeCounter);
                         pageEntity.setTimeStamp(this.simulationTime);
+                        pageEntity.setReferenceBit(true);
+                       
                         realMemory.set(i, pageEntity);
                         this.pagingAlgorithm.addPageToAlgorithmStructure(pageEntity);
                         this.simulationTime += 5;
@@ -117,6 +121,8 @@ public class MMUEntity {
                 this.pagingAlgorithm.handlePageFault(this.realMemory, this.virtualMemory, pageEntity);
                 pageEntity.setLoadedTime(pageTimeCounter);
                 pageEntity.setTimeStamp(this.simulationTime);
+                pageEntity.setReferenceBit(true);
+                
                 this.simulationTime += 5;
                 pageTimeCounter += 5;
             }

@@ -8,7 +8,6 @@ import tec.ic660.pagination.presentation.dto.ConfigRandomDTO;
 import tec.ic660.pagination.presentation.dto.DualSimulationReportDTO;
 import tec.ic660.pagination.presentation.dto.InstructionsListDTO;
 import tec.ic660.pagination.presentation.dto.SimulationReportDTO;
-import tec.ic660.pagination.presentation.dto.TableRawDTO;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
