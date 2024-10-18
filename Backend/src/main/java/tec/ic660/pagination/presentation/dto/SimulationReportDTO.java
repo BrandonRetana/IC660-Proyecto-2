@@ -15,14 +15,14 @@ public class SimulationReportDTO {
 
     // Información de la memoria
     private Integer realMemoryUsageInKb;         // Memoria real utilizada en KB
-    private Integer realMemoryUsagePercentage;    // Porcentaje de uso de la memoria real
+    private Float realMemoryUsagePercentage;    // Porcentaje de uso de la memoria real
     private Integer virtualMemoryUsageInKb;      // Memoria virtual utilizada en KB
-    private Integer virtualMemoryUsagePercentage; // Porcentaje de uso de la memoria virtual
+    private Float virtualMemoryUsagePercentage; // Porcentaje de uso de la memoria virtual
 
     // Información sobre las páginas y la memoria
     private Integer internalFragmentation;       // Fragmentación interna en la memoria
     private Integer trashingDuration;            // Tiempo total de trashing
-    private Integer trashingPercentage;           // Porcentaje de tiempo en trashing
+    private Float trashingPercentage;           // Porcentaje de tiempo en trashing
     private Integer pagesLoadedInMemory;         // Número de páginas cargadas en la memoria real
     private Integer pagesInVirtualMemory;        // Número de páginas en la memoria virtual
     public List<TableRawDTO> getPageTable() {
@@ -49,10 +49,10 @@ public class SimulationReportDTO {
     public void setRealMemoryUsageInKb(Integer realMemoryUsageInKb) {
         this.realMemoryUsageInKb = realMemoryUsageInKb;
     }
-    public Integer getRealMemoryUsagePercentage() {
+    public Float getRealMemoryUsagePercentage() {
         return realMemoryUsagePercentage;
     }
-    public void setRealMemoryUsagePercentage(Integer realMemoryUsagePercentage) {
+    public void setRealMemoryUsagePercentage(Float realMemoryUsagePercentage) {
         this.realMemoryUsagePercentage = realMemoryUsagePercentage;
     }
     public Integer getVirtualMemoryUsageInKb() {
@@ -61,10 +61,10 @@ public class SimulationReportDTO {
     public void setVirtualMemoryUsageInKb(Integer virtualMemoryUsageInKb) {
         this.virtualMemoryUsageInKb = virtualMemoryUsageInKb;
     }
-    public Integer getVirtualMemoryUsagePercentage() {
+    public Float getVirtualMemoryUsagePercentage() {
         return virtualMemoryUsagePercentage;
     }
-    public void setVirtualMemoryUsagePercentage(Integer virtualMemoryUsagePercentage) {
+    public void setVirtualMemoryUsagePercentage(Float virtualMemoryUsagePercentage) {
         this.virtualMemoryUsagePercentage = virtualMemoryUsagePercentage;
     }
     public Integer getInternalFragmentation() {
@@ -79,10 +79,10 @@ public class SimulationReportDTO {
     public void setTrashingDuration(Integer trashingDuration) {
         this.trashingDuration = trashingDuration;
     }
-    public Integer getTrashingPercentage() {
+    public Float getTrashingPercentage() {
         return trashingPercentage;
     }
-    public void setTrashingPercentage(Integer trashingPercentage) {
+    public void setTrashingPercentage(Float trashingPercentage) {
         this.trashingPercentage = trashingPercentage;
     }
     public Integer getPagesLoadedInMemory() {

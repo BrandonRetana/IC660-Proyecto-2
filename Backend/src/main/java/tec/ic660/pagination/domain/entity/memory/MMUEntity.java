@@ -72,6 +72,7 @@ public class MMUEntity {
                 // Metrics
                 remainingSize -= usedSpace;
                 this.simulationTime += 5;
+                this.TrashingTime += 5;
                 pageTimeCounter += 5;
             }
         }
@@ -108,6 +109,7 @@ public class MMUEntity {
                         realMemory.set(i, pageEntity);
                         this.pagingAlgorithm.addPageToAlgorithmStructure(pageEntity);
                         this.simulationTime += 5;
+                        this.TrashingTime += 5;
                         pageTimeCounter += 5;
                         break;
                     }
@@ -121,11 +123,11 @@ public class MMUEntity {
                 pageEntity.setReferenceBit(true);
                 
                 this.simulationTime += 5;
+                this.TrashingTime += 5;
                 pageTimeCounter += 5;
             }
 
         }
-
     }
 
     public void deleteMemory(PTR ptr) {
@@ -134,11 +136,9 @@ public class MMUEntity {
             if (pageEntity.isInRealMemory()) {
                 realMemory.set(pageEntity.getPhysicalAddres(), null);
                 pagingAlgorithm.removePageFromAlgorithmStructure(pageEntity);
-                this.simulationTime += 1;
             }
             else{
                 virtualMemory.remove(pageEntity);
-                this.simulationTime += 5;
             }
         }
         memoryMap.remove(ptr);

@@ -83,11 +83,12 @@ public class SimulationService {
 
     /*------------------------------------- Calculate metrics -------------------------------------*/
 
-    private Integer calculatePercentage(Integer part, Integer total) {
+    private Float calculatePercentage(Integer part, Integer total) {
         if (total > 0) {
-            return (part / total) * 100;
+            Float percentage = (part.floatValue() / total.floatValue()) * 100;
+            return Math.round(percentage * 100) / 100f;
         } else {
-            return 0;
+            return 0f;
         }
     }
 
@@ -190,14 +191,15 @@ public class SimulationService {
 
         // Memory information
         Integer realMemoryUsageInKb = this.mmu.getRealMemory().getNumberOfPages() * 4;
-        Integer realMemoryUsagePercentage = calculatePercentage(realMemoryUsageInKb, 400);
+        Float realMemoryUsagePercentage = calculatePercentage(realMemoryUsageInKb, 400);
         Integer virtualMemoryUsageInKb = this.mmu.getVirtualMemory().size() * 4;
-        Integer virtualMemoryUsagePercentage = calculatePercentage(virtualMemoryUsageInKb, realMemoryUsageInKb);
+        Float virtualMemoryUsagePercentage = calculatePercentage(virtualMemoryUsageInKb, realMemoryUsageInKb);
 
         // Pages information
         Integer internalFragmentation = this.mmu.getMemoryFragmentation();
         Integer trashingDuration = this.mmu.getTrashingTime();
-        Integer trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
+        Float trashingPercentage = calculatePercentage(trashingDuration, simulationDuration);
+        System.out.println("Trashing percentage: " + trashingPercentage);
         Integer pagesLoadedInMemory = this.mmu.getRealMemory().getNumberOfPages();
         Integer pagesInVirtualMemory = this.mmu.getVirtualMemory().size();
 
