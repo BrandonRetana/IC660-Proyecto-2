@@ -54,6 +54,7 @@ function PopUp({
           (line) => line !== ""
         );
         setInstructions(fileContent);
+        setProcess(instructionsArray.length);
 
         const configData = {
           instructions: instructionsArray,
@@ -75,7 +76,7 @@ function PopUp({
   useEffect(() => {
     const isValid =
       selectedOption !== "" &&
-      ((!isAutomatic && fileContent !== null) ||
+      ((!isAutomatic && fileContent !== "") ||
         (process &&
           operations &&
           process > 0 &&
@@ -103,7 +104,7 @@ function PopUp({
         console.error("Error al enviar la configuración:", error);
       }
     } else {
-      console.warn("Nos fuimos!");
+      console.warn("Nos fuimos con " + process + "procesos! ._.");
       handleClose();
       handleStart();
       handleShowController();
