@@ -76,7 +76,7 @@ function App() {
       <div className="Monitor">
         <div className="VStack RamSummary">
           <RamState
-            title="RAM - OTP"
+            title="RAM - OPT"
             data={{ pageTable: data?.simulationReport2.pageTable || [] }}
           />
           <RamState
@@ -87,7 +87,7 @@ function App() {
         <div className="HStack tables">
           <div className="left VStack">
             <MMUTable
-              title="MMU - OTP"
+              title="MMU - OPT"
               data={data?.simulationReport2.pageTable}
             />
             <ProcessesSimTime
