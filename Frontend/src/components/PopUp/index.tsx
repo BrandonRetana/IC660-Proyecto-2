@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./styles.scss";
 import DragDrop from "./DragDrop";
 import OptionSelector from "../Selector";
-import { sendConfig } from "../../service/config.service";
+import { sendConfig, sendInstructions } from "../../service/config.service";
 
 interface PopUpProps {
   handleClose: () => void;
@@ -44,9 +44,39 @@ function PopUp({
   }, [selectedMethod]);
 
   useEffect(() => {
+    const processFileContent = async () => {
+      if (fileContent) {
+        const formattedContent = fileContent
+          .split("\n")
+          .map((line) => line.trim());
+
+        const instructionsArray = formattedContent.filter(
+          (line) => line !== ""
+        );
+        setInstructions(fileContent);
+        setProcess(instructionsArray.length);
+
+        const configData = {
+          instructions: instructionsArray,
+          algorithm: algorithmMapping[selectedOption] || 0,
+        };
+
+        try {
+          const response = await sendInstructions(configData);
+          console.warn(response);
+        } catch (error) {
+          console.error("Error enviando instrucciones:", error);
+        }
+      }
+    };
+
+    processFileContent();
+  }, [fileContent, selectedOption]);
+
+  useEffect(() => {
     const isValid =
       selectedOption !== "" &&
-      ((!isAutomatic && fileContent !== null) ||
+      ((!isAutomatic && fileContent !== "") ||
         (process &&
           operations &&
           process > 0 &&
@@ -74,6 +104,7 @@ function PopUp({
         console.error("Error al enviar la configuración:", error);
       }
     } else {
+      console.warn("Nos fuimos con " + process + "procesos! ._.");
       handleClose();
       handleStart();
       handleShowController();

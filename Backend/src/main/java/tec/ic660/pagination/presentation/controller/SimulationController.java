@@ -61,6 +61,9 @@ public class SimulationController {
             Queue<String> stringQueueOPT = new LinkedList<String>(request.getInstructions());
             Queue<String> stringQueue = new LinkedList<String>(request.getInstructions());
 
+            System.out.println(stringQueueOPT);
+            System.out.println(stringQueue);
+
             service.setInstructionsQueue(stringQueue);
             serviceOPT.setInstructionsQueue(stringQueueOPT);
 
