@@ -215,7 +215,11 @@ function PopUp({
                   onClick={handleDownload}
                   disabled={!instructions}
                 >
-                  Descargar archivo
+                  Descargar archivo{" "}
+                  <i
+                    className="fa-solid fa-download"
+                    style={{ marginLeft: "0.5rem" }}
+                  ></i>
                 </button>
               )}
 
@@ -224,7 +228,7 @@ function PopUp({
                 type="button"
                 onClick={validForm ? handleSubmit : undefined}
               >
-                {isAutomatic && !instructions ? "Generar" : "Empezar"}
+                {isAutomatic && !instructions ? "Generar" : `Empezar`}
               </button>
             </form>
           </div>
