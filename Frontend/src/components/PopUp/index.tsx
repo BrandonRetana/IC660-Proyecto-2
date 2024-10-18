@@ -9,6 +9,7 @@ interface PopUpProps {
   handleStart: () => void;
   handleShowController: () => void;
   handleSetProcess: (amount: number) => void;
+  handleSetAlgorithm: (name: string) => void;
 }
 
 function PopUp({
@@ -16,6 +17,7 @@ function PopUp({
   handleStart,
   handleShowController,
   handleSetProcess,
+  handleSetAlgorithm,
 }: PopUpProps) {
   const [selectedOption, setSelectedOption] = useState("");
   const [selectedMethod, setSelectedMethod] = useState("Archivo");
@@ -104,11 +106,11 @@ function PopUp({
         console.error("Error al enviar la configuración:", error);
       }
     } else {
-      console.warn("Nos fuimos con " + operations + "procesos! ._.");
       handleClose();
       handleStart();
       handleShowController();
       handleSetProcess(operations || 0);
+      handleSetAlgorithm(selectedOption);
     }
   };
 

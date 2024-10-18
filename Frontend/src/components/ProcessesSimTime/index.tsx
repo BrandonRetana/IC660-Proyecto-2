@@ -20,8 +20,8 @@ export default function ProcessesSimTime({
       </thead>
       <tbody>
         <tr>
-          <td>{simulationDuration && simulationDuration}</td>
-          <td>{totalProcesses && totalProcesses + "s"}</td>
+          <td>{totalProcesses && totalProcesses}</td>
+          <td>{simulationDuration && simulationDuration + "s"}</td>
         </tr>
       </tbody>
     </table>

@@ -36,6 +36,7 @@ function App() {
   const [executing, setExecuting] = useState(false);
   const [controllerView, setControllerView] = useState(false);
   const [process, setProcess] = useState(0);
+  const [algorithm, setAlgorithm] = useState("");
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,6 +70,7 @@ function App() {
           handleStart={() => setExecuting(true)}
           handleShowController={() => setControllerView(true)}
           handleSetProcess={(value: number) => setProcess(value)}
+          handleSetAlgorithm={(value: string) => setAlgorithm(value)}
         />
       )}
       <div className="Monitor">
@@ -78,7 +80,7 @@ function App() {
             data={{ pageTable: data?.simulationReport1.pageTable || [] }}
           />
           <RamState
-            title="RAM - OTRA"
+            title={`RAM - ${algorithm}`}
             data={{ pageTable: data?.simulationReport2.pageTable || [] }}
           />
         </div>
@@ -118,7 +120,7 @@ function App() {
           </div>
           <div className="right VStack">
             <MMUTable
-              title="MMU - OTRA"
+              title={`MMU - ${algorithm}`}
               data={data?.simulationReport2.pageTable}
             />
             <ProcessesSimTime
