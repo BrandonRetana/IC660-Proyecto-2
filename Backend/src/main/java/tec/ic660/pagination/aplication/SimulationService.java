@@ -26,8 +26,6 @@ public class SimulationService {
 
     private InstructionGenerator instructionGenerator;
 
-    private PagingAlgorithm algorithm;
-
     private Queue<String> instructionsQueue;
 
     public SimulationService() {
@@ -68,10 +66,6 @@ public class SimulationService {
     public void executeNextStep() {
         String instruction = instructionsQueue.poll();
         System.out.println(instruction);
-        if(instruction == null){
-            System.out.println("Ya no hay mas we");
-            System.exit(1);
-        }
         if (instruction.startsWith("new")) {
             this.executeNew(instruction);
         } else if (instruction.startsWith("use")) {
@@ -90,7 +84,7 @@ public class SimulationService {
 
     private Integer calculatePercentage(Integer part, Integer total) {
         if (total > 0) {
-            return ( part / total) * 100;
+            return (part / total) * 100;
         } else {
             return 0;
         }
@@ -110,36 +104,36 @@ public class SimulationService {
                 if (pageEntity == null) {
                     continue; // Saltar si la página es nula
                 }
-                
+
                 // Crear el DTO
                 dto = new TableRawDTO();
-                
+
                 // Set page ID
                 dto.setPageId(pageEntity.getId());
-                
+
                 // Set PID
                 Integer ptrId = pageEntity.getPtrId();
                 PTR ptr = this.scheduler.getPTRbyId(ptrId);
                 Integer pid = ptr.getPid();
                 dto.setPid(pid);
-                
+
                 // Set logical memory position
                 dto.setLAddr(i);
-                
+
                 // Set memory real or virtual
                 if (pageEntity.isInRealMemory()) {
                     dto.setLoaded("X");
-                    dto.setMAddr(pageEntity.getPhysicalAddres()+1);
+                    dto.setMAddr(pageEntity.getPhysicalAddres() + 1);
                 } else {
                     dto.setDAddr(pageEntity.getPhysicalAddres());
                 }
-                
+
                 // Set mark
                 dto.setMark(pageEntity.getMark());
-                
+
                 // Set time loaded
-                dto.setLoadedT(String.valueOf(pageEntity.getLoadedTime())+"s");  // Esto parece ser un valor fijo
-                
+                dto.setLoadedT(String.valueOf(pageEntity.getLoadedTime()) + "s"); // Esto parece ser un valor fijo
+
                 // Agregar a la lista
                 logicalMemoryData.add(dto);
             } catch (Exception e) {
@@ -156,27 +150,32 @@ public class SimulationService {
         return logicalMemoryData;
     }
 
-    public Queue<String> setSimulationConfig(ConfigRandomDTO configDTO) {
-
-        Queue<String> randomInstructions = instructionGenerator.generateInstructions(configDTO.getSeed(),
-                configDTO.getProcess(), configDTO.getOperations());
-        setInstructionsQueue(randomInstructions);
-
-        switch (configDTO.getAlgorithm()) {
+    private PagingAlgorithm getSelectedAlgorithm(Integer numberOfSelected) {
+        PagingAlgorithm sleectedAlgorithm = null;
+        switch (numberOfSelected) {
             case 1:
-                algorithm = new FIFOAlgorithm();
+                sleectedAlgorithm = new FIFOAlgorithm();
                 break;
             case 2:
-                algorithm = new SecondChanceAlgorithm();
+                sleectedAlgorithm = new SecondChanceAlgorithm();
                 break;
             case 3:
-                algorithm = new MRUAlgorithm();
+                sleectedAlgorithm = new MRUAlgorithm();
                 break;
             case 4:
-                algorithm = new RandomAlgorithm();
+                sleectedAlgorithm = new RandomAlgorithm();
                 break;
         }
-        this.mmu.setPagingAlgorithm(algorithm);
+        return sleectedAlgorithm;
+    }
+
+    public Queue<String> setSimulationConfig(ConfigRandomDTO configDTO) {
+
+        Queue<String> randomInstructions = instructionGenerator.generateInstructions(configDTO.getSeed(), configDTO.getProcess(), configDTO.getOperations());
+        setInstructionsQueue(randomInstructions);
+
+        PagingAlgorithm selectedAlgorithm = getSelectedAlgorithm(configDTO.getAlgorithm());
+        this.mmu.setPagingAlgorithm(selectedAlgorithm);
         return randomInstructions;
     }
 
@@ -228,9 +227,23 @@ public class SimulationService {
         this.instructionsQueue = instructionsQueue;
     }
 
-    public void setAlgorithm() {
-        algorithm = new FIFOAlgorithm();
+    public void setSelectedAlgorithm(Integer numOfAlgorithm){
+        this.mmu.setPagingAlgorithm(this.getSelectedAlgorithm(numOfAlgorithm));
+    }
+    
+    public void setOPTAlgorithm() {
+        PagingAlgorithm algorithm = new FIFOAlgorithm();
         this.mmu.setPagingAlgorithm(algorithm);
+    }
+
+    public void resetAll() {
+        this.mmu = new MMUEntity();
+        this.scheduler = new SchedulerEntity();
+        this.instructionGenerator = new InstructionGenerator();
+        PageEntity.setCounter(0);
+        PTR.setCounter(0);
+        this.instructionsQueue = null;
+
     }
 
 }

@@ -32,15 +32,16 @@ public class SimulationController {
 
     private SimulationService serviceOPT = new SimulationService();
 
-    private Queue<String> stringQueue = new LinkedList<String>();
-
     @PostMapping("/sent/config")
-    public ResponseEntity<List<String>> setConfig(@Validated @RequestBody ConfigRandomDTO config) {
+    public ResponseEntity<List<String>> setConfigRandom(@Validated @RequestBody ConfigRandomDTO config) {
         try {
+            resetAllServices();
             Queue<String> randomInstructions = this.service.setSimulationConfig(config);
             Queue<String> copiedInstructionsQueue = new LinkedList<>(randomInstructions);
+
             serviceOPT.setInstructionsQueue(copiedInstructionsQueue);
-            serviceOPT.setAlgorithm();
+            serviceOPT.setOPTAlgorithm();
+
             List<String> instructionList = new LinkedList<>(randomInstructions);
             return ResponseEntity.ok(instructionList);
         } catch (Exception e) {
@@ -51,16 +52,21 @@ public class SimulationController {
     }
 
     @PostMapping("/sent/instructions")
-    public ResponseEntity<String> getInstructions(@RequestBody InstructionsListDTO request) {
+    public ResponseEntity<String> setInstructionsConfig(@RequestBody InstructionsListDTO request) {
         try {
             if (request.getInstructions() == null || request.getInstructions().isEmpty()) {
                 return new ResponseEntity<String>("The list of strings is empty", HttpStatus.BAD_REQUEST);
             }
+            resetAllServices();
 
-            stringQueue.addAll(request.getInstructions());
+            Queue<String> stringQueueOPT = new LinkedList<String>(request.getInstructions());
+            Queue<String> stringQueue = new LinkedList<String>(request.getInstructions());
 
             service.setInstructionsQueue(stringQueue);
-            serviceOPT.setInstructionsQueue(stringQueue);
+            serviceOPT.setInstructionsQueue(stringQueueOPT);
+
+            service.setSelectedAlgorithm(request.getAlgorithm());
+            serviceOPT.setOPTAlgorithm();
 
             return new ResponseEntity<String>("Strings added to the queue", HttpStatus.OK);
 
@@ -100,6 +106,11 @@ public class SimulationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null); // Devuelve null o podrías devolver un objeto vacío o con detalles
         }
+    }
+
+    private void resetAllServices(){
+        this.service.resetAll();
+        this.serviceOPT.resetAll();
     }
 
     @GetMapping("/ping")

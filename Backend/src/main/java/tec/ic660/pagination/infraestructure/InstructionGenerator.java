@@ -4,97 +4,75 @@ import java.util.*;
 
 public class InstructionGenerator {
 
-    public Queue<String> generateInstructions(Integer seed, Integer numberOfProcess, Integer numberOfInstructions) {
-        LinkedList<String> instructions = new LinkedList<>();
-        List<Integer> ptrIds = new LinkedList<>();
-        Integer actualPtrId = 0;
+    public Queue<String> generateInstructions(Integer seed, Integer numberOfProcesses, Integer numberOfInstructions) {
+        Integer numberOfInstructionsMinusKills = numberOfInstructions-numberOfProcesses; 
+        List<String> instructions = new ArrayList<>();
+        List<Integer> activePtrs = new ArrayList<>();
         Random random = new Random(seed);
-        Map<Integer, List<Integer>> processMap = new Hashtable<>();
-        Set<Integer> activeProcesses = new HashSet<>(); // Para rastrear los procesos que han sido creados
-        Boolean killedPid;
 
-        for (int pid = 1; pid <= numberOfProcess; pid++) {
-            List<String> processInstructions = new ArrayList<>();
-            int numInstructions = numberOfInstructions / numberOfProcess;
-            killedPid = false;
-            for (int i = 0; i < numInstructions; i++) {
-                String instruction = getRandomInstruction(random);
-                String lastElement = "";
-                if (instructions.size() > 0) {
-                    lastElement = instructions.get(instructions.size() - 1);
-                }
+        // Mapa que almacena los PTRs de cada proceso
+        Map<Integer, List<Integer>> processMap = new HashMap<>();
+        Set<Integer> createdProcesses = new HashSet<>(); // Para rastrear los procesos creados
+        int totalOperations = 0;
+        int nextPtrId = 1;
 
-                // Validación para evitar "new" justo después de "kill"
-                if (instruction.equals("new") && lastElement.startsWith("kill")) {
-                    i--; // Saltear esta instrucción, reintentar
-                    continue;
-                }
-
-                // Validación para "use" y "delete", solo si hay PTRs
-                if ((instruction.equals("use") || instruction.equals("delete")) && ptrIds.size() == 0) {
-                    i--; // Saltear esta instrucción, reintentar
-                    continue;
-                }
-
-                // Validación para "kill", solo si el proceso fue creado
-                if (instruction.equals("kill") && !activeProcesses.contains(pid) && killedPid) {
-                    i--; // Saltear esta instrucción, reintentar
-                    continue;
-                }
-
-                switch (instruction) {
-                    case "new":
-                        int size = random.nextInt(81920) + 1;
-                        if (!processMap.containsKey(pid)) {
-                        processMap.put(pid, new LinkedList<>());
-                        processInstructions.add(String.format("new(%d, %d)", pid, size));
-                        actualPtrId++;
-                        ptrIds.add(actualPtrId);
-                        List<Integer> actualList = processMap.get(pid);
-                        actualList.add(actualPtrId);
-                        processMap.put(pid, actualList);
-                        activeProcesses.add(pid);
-                            }
-                            else{
-                        List<Integer> pids2beSelected = new ArrayList<>(processMap.keySet());
-                        Integer pidSelected = pids2beSelected.get(random.nextInt(pids2beSelected.size())); 
-                        processInstructions.add(String.format("new(%d, %d)", pidSelected, size));
-                        actualPtrId++;
-                        ptrIds.add(actualPtrId);
-                        List<Integer> actualList = processMap.get(pidSelected);
-                        actualList.add(actualPtrId);
-                        processMap.put(pidSelected, actualList);
-                        activeProcesses.add(pidSelected); // Marcar el proceso como activo
-                            }
-                        break;
-                    case "use":
-                        int ptrUse = random.nextInt(ptrIds.size());
-                        Integer ptrdId2use = ptrIds.get(ptrUse);
-                        processInstructions.add(String.format("use(%d)", ptrdId2use));
-                        break;
-                    case "delete":
-                        int ptrIdex2delete = random.nextInt(ptrIds.size());
-                        Integer ptrdId2Delete = ptrIds.get(ptrIdex2delete);
-                        processInstructions.add(String.format("delete(%d)", ptrdId2Delete));
-                        ptrIds.remove(ptrdId2Delete);
-                        break;
-                    case "kill":
-                        List<Integer> pids2beSelectedkill = new ArrayList<>(processMap.keySet());
-                        Integer pidSelected2kill = pids2beSelectedkill.get(random.nextInt(pids2beSelectedkill.size())); 
-                        processInstructions.add(String.format("kill(%d)", pidSelected2kill));
-                        List<Integer> list2delete = processMap.get(pidSelected2kill);
-                        ptrIds.removeAll(list2delete); // Eliminar todos los PTRs asociados al proceso
-                        processMap.remove(pidSelected2kill); // Eliminar el proceso del mapa
-                        activeProcesses.remove(pidSelected2kill); // Marcar el proceso como inactivo
-                        killedPid = true;
-                        break;
-                }
-
-            }
-            instructions.addAll(processInstructions);
+        // Inicializar los procesos con una lista vacía de PTRs
+        for (int pid = 1; pid <= numberOfProcesses; pid++) {
+            processMap.put(pid, new ArrayList<>());
         }
-        return instructions;
+
+        // Primera fase: Generar operaciones 'new', 'use' y 'delete'
+        while (totalOperations < numberOfInstructionsMinusKills) {
+            int pid = random.nextInt(numberOfProcesses) + 1; // Seleccionar un proceso aleatorio (entre 1 y numberOfProcesses)
+            String instruction = getRandomInstruction(random);
+
+            // Instrucciones normales (new, use, delete)
+            switch (instruction) {
+                case "new":
+                    // Asignar un nuevo PTR al proceso
+                    int size = random.nextInt(81920) + 1;
+                    instructions.add(String.format("new(%d, %d)", pid, size));
+                    processMap.get(pid).add(nextPtrId); // Añadir un nuevo PTR al proceso
+                    activePtrs.add(nextPtrId);
+                    nextPtrId++;
+                    createdProcesses.add(pid); // Marcar el proceso como creado
+                    totalOperations++;
+                    break;
+
+                case "use":
+                    // Solo se puede usar si el proceso tiene PTRs disponibles
+                    if (!processMap.get(pid).isEmpty()) {
+                        int ptrToUse = processMap.get(pid).get(random.nextInt(processMap.get(pid).size()));
+                        instructions.add(String.format("use(%d)", ptrToUse));
+                        totalOperations++;
+                    }
+                    break;
+
+                case "delete":
+                    // Solo se puede eliminar si el proceso tiene PTRs activos
+                    if (!processMap.get(pid).isEmpty()) {
+                        int ptrToDelete = processMap.get(pid).remove(random.nextInt(processMap.get(pid).size()));
+                        activePtrs.remove(Integer.valueOf(ptrToDelete));
+                        instructions.add(String.format("delete(%d)", ptrToDelete));
+                        totalOperations++;
+                    }
+                    break;
+            }
+
+            // Si hemos alcanzado el número de operaciones, detener
+            if (totalOperations >= numberOfInstructions) {
+                break;
+            }
+        }
+
+        // Segunda fase: Generar las instrucciones 'kill' para todos los procesos creados
+        for (Integer pid : createdProcesses) {
+            instructions.add(String.format("kill(%d)", pid)); // Generar 'kill' para cada proceso creado
+        }
+
+        return new LinkedList<>(instructions);
     }
+
 
     // Método para obtener una instrucción aleatoria con probabilidades
     private static String getRandomInstruction(Random random) {
@@ -104,12 +82,10 @@ public class InstructionGenerator {
         // Asignar rangos a cada instrucción según sus porcentajes
         if (randomValue <= 40) {
             return "new";  // 40% probabilidad
-        } else if (randomValue <=  75) {
-            return "use";  // 40% 
-        } else if (randomValue <= 98) {
-            return "delete";  // 10% 
+        } else if (randomValue <= 75) {
+            return "use";  // 35% probabilidad
         } else {
-            return "kill";  // 10% 
+            return "delete";  // 23% probabilidad
         }
     }
 }
